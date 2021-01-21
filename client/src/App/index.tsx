@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
 import ChatBox from '../components/ChatBox';
 import MessageBox from '../components/MessageBox';
 import NameForm from '../components/NameForm';
@@ -12,18 +13,23 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessageProps[]>([]);
 
+  const msgInputRef = useRef<HTMLInputElement>(null);
+  const socketRef = useRef<Socket | null>(null);
+
   const handleMessageSend = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { displayName, message } = inputState;
-    const msg = message.trim();
-    if (msg !== '') {
-      setChatMessages(
-        chatMessages.concat({
-          user: displayName.trim(),
-          message: msg,
-          time: Date.now(),
-        })
-      );
+    if (message !== '') {
+      const msg = {
+        user: displayName.trim(),
+        message: message.trim(),
+        time: Date.now(),
+      };
+      setChatMessages(chatMessages.concat(msg));
+
+      // Send message to other users
+      socketRef.current?.emit('chat message', msg);
+
       setInputState({
         ...inputState,
         message: '',
@@ -39,10 +45,16 @@ export default function App() {
     });
   };
 
-  const messageInput = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    if (messageInput && messageInput.current) {
-      messageInput.current.focus();
+    if (msgInputRef && msgInputRef.current) {
+      msgInputRef.current.focus();
+    }
+    if (isLoggedIn) {
+      const socket = io();
+      socketRef.current = socket;
+      socket.on('chat message', (msg: ChatMessageProps) => {
+        setChatMessages((prev) => prev.concat(msg));
+      });
     }
   }, [isLoggedIn]);
 
@@ -52,7 +64,7 @@ export default function App() {
         <div className="flex flex-col justify-between p-4 w-full h-full">
           <ChatBox entries={chatMessages} />
           <MessageBox
-            textInputRef={messageInput}
+            textInputRef={msgInputRef}
             textInputVal={inputState.message}
             onSubmit={(e) => handleMessageSend(e)}
             onChange={(e) => handleInputChange(e)}
