@@ -5,11 +5,16 @@ import MessageBox from '../components/MessageBox';
 import NameForm from '../components/NameForm';
 import { ChatMessageProps } from '../components/ChatMessage';
 
+function sendChatMessage(socket: Socket | null, msg: ChatMessageProps) {
+  socket?.emit('chat message', msg);
+}
+
 export default function App() {
   const [inputState, setInputState] = useState({
     displayName: '',
     message: '',
   });
+  const [user, setUser] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessageProps[]>([]);
 
@@ -18,22 +23,26 @@ export default function App() {
 
   const handleMessageSend = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { displayName, message } = inputState;
-    if (message !== '') {
-      const msg = {
-        user: displayName.trim(),
-        message: message.trim(),
+    const msg = inputState.message.trim();
+    if (msg !== '') {
+      sendChatMessage(socketRef.current, {
+        title: user,
+        message: msg,
         time: Date.now(),
-      };
-      setChatMessages(chatMessages.concat(msg));
-
-      // Send message to other users
-      socketRef.current?.emit('chat message', msg);
-
+      });
       setInputState({
         ...inputState,
         message: '',
       });
+    }
+  };
+
+  const handleNameSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const name = inputState.displayName.trim();
+    if (name !== '') {
+      setUser(name);
+      setIsLoggedIn(true);
     }
   };
 
@@ -52,11 +61,18 @@ export default function App() {
     if (isLoggedIn) {
       const socket = io();
       socketRef.current = socket;
+      socket.on('connect', () => {
+        sendChatMessage(socket, {
+          title: `Welcome ${user}!`,
+          message: '',
+          time: Date.now(),
+        });
+      });
       socket.on('chat message', (msg: ChatMessageProps) => {
         setChatMessages((prev) => prev.concat(msg));
       });
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, user]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
@@ -73,10 +89,7 @@ export default function App() {
       ) : (
         <NameForm
           textInputVal={inputState.displayName}
-          onSubmit={(e) => {
-            e.preventDefault();
-            setIsLoggedIn(true);
-          }}
+          onSubmit={(e) => handleNameSubmit(e)}
           onChange={(e) => handleInputChange(e)}
         />
       )}
