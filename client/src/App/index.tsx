@@ -4,11 +4,7 @@ import ChatBox from '../components/ChatBox';
 import MessageBox from '../components/MessageBox';
 import NameForm from '../components/NameForm';
 import Sidebar from '../components/Sidebar';
-import { ChatMessageProps } from '../components/ChatMessage';
-
-function sendChatMessage(socket: Socket | null, msg: ChatMessageProps) {
-  socket?.emit('chat message', msg);
-}
+import { ChatMessageProps } from '../common/types';
 
 export default function App() {
   const [inputState, setInputState] = useState({
@@ -26,10 +22,10 @@ export default function App() {
     e.preventDefault();
     const msg = inputState.message.trim();
     if (msg !== '') {
-      sendChatMessage(socketRef.current, {
-        title: user,
-        message: msg,
+      socketRef.current?.emit('chat message', {
+        user,
         time: Date.now(),
+        message: msg,
       });
       setInputState({
         ...inputState,
@@ -63,11 +59,7 @@ export default function App() {
       const socket = io();
       socketRef.current = socket;
       socket.on('connect', () => {
-        sendChatMessage(socket, {
-          title: `Welcome ${user}!`,
-          message: '',
-          time: Date.now(),
-        });
+        socket.emit('user connect', user);
       });
       socket.on('chat message', (msg: ChatMessageProps) => {
         setChatMessages((prev) => prev.concat(msg));

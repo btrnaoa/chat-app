@@ -9,10 +9,12 @@ const PORT = process.env.PORT || 3001;
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
   socket.on('chat message', (msg) => {
     console.log(msg);
     io.emit('chat message', msg);
+  });
+  socket.on('user connect', (user) => {
+    console.log(user + ' has connected');
   });
   socket.on('disconnect', () => {
     console.log('user disconnected');
