@@ -3,6 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import ChatBox from '../components/ChatBox';
 import MessageBox from '../components/MessageBox';
 import NameForm from '../components/NameForm';
+import Sidebar from '../components/Sidebar';
 import { ChatMessageProps } from '../components/ChatMessage';
 
 function sendChatMessage(socket: Socket | null, msg: ChatMessageProps) {
@@ -75,23 +76,31 @@ export default function App() {
   }, [isLoggedIn, user]);
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
+    <div className="h-screen">
       {isLoggedIn ? (
-        <div className="flex flex-col justify-between p-4 w-full h-full">
-          <ChatBox entries={chatMessages} />
-          <MessageBox
-            textInputRef={msgInputRef}
-            textInputVal={inputState.message}
-            onSubmit={(e) => handleMessageSend(e)}
+        <div className="flex items-stretch h-full">
+          <Sidebar />
+          <div className="flex flex-col flex-1">
+            <div className="border-b border-gray-200 h-14" />
+            <div className="flex flex-col justify-between flex-1 h-full p-4">
+              <ChatBox entries={chatMessages} />
+              <MessageBox
+                textInputRef={msgInputRef}
+                textInputVal={inputState.message}
+                onSubmit={(e) => handleMessageSend(e)}
+                onChange={(e) => handleInputChange(e)}
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <NameForm
+            textInputVal={inputState.displayName}
+            onSubmit={(e) => handleNameSubmit(e)}
             onChange={(e) => handleInputChange(e)}
           />
         </div>
-      ) : (
-        <NameForm
-          textInputVal={inputState.displayName}
-          onSubmit={(e) => handleNameSubmit(e)}
-          onChange={(e) => handleInputChange(e)}
-        />
       )}
     </div>
   );
