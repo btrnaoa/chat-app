@@ -82,7 +82,7 @@ export default function App() {
           <Sidebar />
           <div className="flex flex-col flex-1">
             <div className="border-b border-gray-200 h-14" />
-            <div className="flex flex-col justify-between flex-1 h-full p-4">
+            <div className="flex flex-col justify-between flex-1 h-full px-4 pb-4 overflow-hidden">
               <ChatBox entries={chatMessages} />
               <MessageBox
                 textInputRef={msgInputRef}
