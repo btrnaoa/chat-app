@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { User } from '../common/types';
 
-export default function Sidebar() {
+export default function Sidebar({ users }: { users: User[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -31,9 +32,9 @@ export default function Sidebar() {
         <div className="p-4">
           <h1 className="mb-2 text-xs font-semibold tracking-wider">Users</h1>
           <ul className="text-sm leading-relaxed">
-            <li>Bart</li>
-            <li>Ned Flanders</li>
-            <li>Homer</li>
+            {users.map((user) => (
+              <li>{user.name}</li>
+            ))}
           </ul>
         </div>
       </div>

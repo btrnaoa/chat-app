@@ -4,7 +4,7 @@ import ChatBox from '../components/ChatBox';
 import MessageBox from '../components/MessageBox';
 import NameForm from '../components/NameForm';
 import Sidebar from '../components/Sidebar';
-import { ChatMessageProps } from '../common/types';
+import { ChatMessageProps, User } from '../common/types';
 
 export default function App() {
   const [inputState, setInputState] = useState({
@@ -12,6 +12,7 @@ export default function App() {
     message: '',
   });
   const [user, setUser] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessageProps[]>([]);
 
@@ -59,10 +60,13 @@ export default function App() {
       const socket = io();
       socketRef.current = socket;
       socket.on('connect', () => {
-        socket.emit('user connect', user);
+        socket.emit('user connect', { name: user, socketId: socket.id });
       });
-      socket.on('chat message', (msg: ChatMessageProps) => {
-        setChatMessages((prev) => prev.concat(msg));
+      socket.on('chat message', (data: ChatMessageProps) => {
+        setChatMessages((prev) => prev.concat(data));
+      });
+      socket.on('users', (data: User[]) => {
+        setUsers(data);
       });
     }
   }, [isLoggedIn, user]);
@@ -71,7 +75,7 @@ export default function App() {
     <div className="h-screen">
       {isLoggedIn ? (
         <div className="flex items-stretch h-full">
-          <Sidebar />
+          <Sidebar users={users} />
           <div className="flex flex-col flex-1">
             <div className="border-b border-gray-200 h-14" />
             <div className="flex flex-col justify-between flex-1 h-full px-4 pb-4 overflow-hidden">

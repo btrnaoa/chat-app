@@ -8,16 +8,18 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
+let users = [];
 io.on('connection', (socket) => {
   socket.on('chat message', (msg) => {
-    console.log(msg);
     io.emit('chat message', msg);
   });
   socket.on('user connect', (user) => {
-    console.log(user + ' has connected');
+    users.push(user);
+    io.emit('users', users);
   });
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    users = users.filter((user) => user.socketId !== socket.id);
+    io.emit('users', users);
   });
 });
 
