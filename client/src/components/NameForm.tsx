@@ -11,9 +11,12 @@ export default function NameForm({
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <form className="select-none" onSubmit={onSubmit}>
+    <form
+      className="flex items-stretch space-x-3 select-none"
+      onSubmit={onSubmit}
+    >
       <input
-        className="py-2 px-4 border border-gray-200 rounded-full shadow-sm mr-2 focus:outline-none"
+        className="px-4 py-2 border rounded-full focus:outline-none"
         name="displayName"
         type="text"
         placeholder="Display name"

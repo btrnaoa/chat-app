@@ -26,14 +26,21 @@ export default function Sidebar({ users }: { users: User[] }) {
       <div
         className={`${
           !isOpen && 'transform -translate-x-64'
-        } absolute z-10 w-64 h-full text-indigo-100 transition-all duration-300 bg-indigo-900 border-r-2 border-indigo-500 sm:static sm:translate-x-0`}
+        } absolute z-10 w-64 h-full text-indigo-100 transition-all duration-300 bg-indigo-700 sm:static sm:translate-x-0`}
         ref={ref}
       >
-        <div className="p-4">
-          <h1 className="mb-2 text-xs font-semibold tracking-wider">Users</h1>
-          <ul className="text-sm leading-relaxed">
+        <div>
+          <h1 className="px-4 py-2 text-xs font-semibold tracking-wider uppercase">
+            Users
+          </h1>
+          <ul>
             {users.map((user) => (
-              <li>{user.name}</li>
+              <li
+                key={user.id}
+                className="px-4 py-1 text-white hover:bg-indigo-600"
+              >
+                {user.name}
+              </li>
             ))}
           </ul>
         </div>

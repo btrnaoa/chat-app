@@ -60,7 +60,7 @@ export default function App() {
       const socket = io();
       socketRef.current = socket;
       socket.on('connect', () => {
-        socket.emit('user connect', { name: user, socketId: socket.id });
+        socket.emit('user connect', { id: socket.id, name: user });
       });
       socket.on('chat message', (data: ChatMessageProps) => {
         setChatMessages((prev) => prev.concat(data));

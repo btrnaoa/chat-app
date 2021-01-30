@@ -18,7 +18,7 @@ io.on('connection', (socket) => {
     io.emit('users', users);
   });
   socket.on('disconnect', () => {
-    users = users.filter((user) => user.socketId !== socket.id);
+    users = users.filter((user) => user.id !== socket.id);
     io.emit('users', users);
   });
 });
