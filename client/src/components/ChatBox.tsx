@@ -7,9 +7,14 @@ export default function ChatBox({ entries }: { entries: ChatMessageProps[] }) {
     <div className="flex flex-col-reverse h-full mb-4 overflow-hidden hover:overflow-y-auto">
       <div>
         {entries.map((item) => {
-          const { user, time, message } = item;
+          const { heading, time, message } = item;
           return (
-            <ChatMessage key={time} user={user} time={time} message={message} />
+            <ChatMessage
+              key={time || Date.now()}
+              heading={heading}
+              time={time}
+              message={message}
+            />
           );
         })}
       </div>

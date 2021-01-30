@@ -16,6 +16,10 @@ io.on('connection', (socket) => {
   socket.on('user connect', (user) => {
     users.push(user);
     io.emit('users', users);
+    io.emit('chat message', {
+      heading: `${user.name} has joined`,
+      time: Date.now(),
+    });
   });
   socket.on('disconnect', () => {
     users = users.filter((user) => user.id !== socket.id);

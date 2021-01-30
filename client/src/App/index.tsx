@@ -24,7 +24,7 @@ export default function App() {
     const msg = inputState.message.trim();
     if (msg !== '') {
       socketRef.current?.emit('chat message', {
-        user,
+        heading: user,
         time: Date.now(),
         message: msg,
       });
@@ -60,6 +60,7 @@ export default function App() {
       const socket = io();
       socketRef.current = socket;
       socket.on('connect', () => {
+        setChatMessages((prev) => prev.concat({ heading: 'Welcome!' }));
         socket.emit('user connect', { id: socket.id, name: user });
       });
       socket.on('chat message', (data: ChatMessageProps) => {
