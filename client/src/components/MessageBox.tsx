@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export default function MessageBox({
-  textInputRef,
   textInputVal,
   onSubmit,
   onChange,
 }: {
-  textInputRef: React.RefObject<HTMLInputElement>;
   textInputVal: string;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (ref && ref.current) ref.current.focus();
+  }, []);
   return (
     <form
       className="flex text-gray-700 rounded-full select-none"
@@ -19,7 +21,7 @@ export default function MessageBox({
     >
       <input
         className="flex-1 px-4 py-2 border-t border-b border-l rounded-l-full focus:outline-none"
-        ref={textInputRef}
+        ref={ref}
         name="message"
         type="text"
         placeholder="Message"

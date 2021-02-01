@@ -16,7 +16,6 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessageProps[]>([]);
 
-  const msgInputRef = useRef<HTMLInputElement>(null);
   const socketRef = useRef<Socket | null>(null);
 
   const handleMessageSend = (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,9 +52,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (msgInputRef && msgInputRef.current) {
-      msgInputRef.current.focus();
-    }
     if (isLoggedIn) {
       const socket = io();
       socketRef.current = socket;
@@ -82,7 +78,6 @@ export default function App() {
             <div className="flex flex-col justify-between flex-1 h-full px-4 pb-4 overflow-hidden">
               <ChatBox entries={chatMessages} />
               <MessageBox
-                textInputRef={msgInputRef}
                 textInputVal={inputState.message}
                 onSubmit={(e) => handleMessageSend(e)}
                 onChange={(e) => handleInputChange(e)}
