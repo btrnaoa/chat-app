@@ -7,7 +7,7 @@ export default function ChatMessage({
   message,
 }: ChatMessageProps) {
   return (
-    <div className="flex flex-col px-4 py-2 text-gray-700 break-words">
+    <div className="flex flex-col px-4 py-2 text-gray-700 break-all">
       <div>
         <span className="mr-4 font-bold">{heading}</span>
         <span className="text-xs text-gray-500">
