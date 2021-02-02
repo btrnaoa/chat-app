@@ -4,11 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "dev": "concurrently \"yarn start\" \"yarn --cwd client start\"",
     "start": "node server",
-    "build": "cd client && yarn && yarn run build"
+    "build": "cd client && yarn && yarn build"
   },
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^3.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^5.3.0"
   }
 }
