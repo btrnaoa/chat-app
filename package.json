@@ -1,16 +1,16 @@
 {
-  "name": "server",
+  "name": "chat-app",
   "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently \"yarn start\" \"yarn --cwd client start\"",
-    "start": "node server",
-    "heroku-postbuild": "cd client && yarn && yarn build"
-  },
-  "dependencies": {
-    "express": "^4.17.1",
-    "socket.io": "^3.1.0"
+    "dev": "concurrently \"yarn workspace server start\" \"yarn workspace client start\"",
+    "heroku-postbuild": "yarn && yarn workspace client build"
   },
   "devDependencies": {
     "concurrently": "^5.3.0"
