@@ -1,4 +1,5 @@
 import React from 'react';
+import tw from 'twin.macro';
 import Button from './Button';
 
 export default function NameForm({
@@ -12,11 +13,11 @@ export default function NameForm({
 }) {
   return (
     <form
-      className="flex items-stretch space-x-3 select-none"
+      css={tw`flex items-stretch space-x-3 select-none`}
       onSubmit={onSubmit}
     >
       <input
-        className="px-4 py-2 border rounded-full focus:outline-none"
+        css={tw`px-4 py-2 border rounded-full focus:outline-none`}
         name="displayName"
         type="text"
         placeholder="Display name"

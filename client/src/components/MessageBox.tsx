@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import tw from 'twin.macro';
 
 export default function MessageBox({
   textInputVal,
@@ -15,12 +16,12 @@ export default function MessageBox({
   }, []);
   return (
     <form
-      className="flex text-gray-700 border rounded-full select-none"
+      css={tw`flex text-gray-700 border rounded-full select-none`}
       autoComplete="off"
       onSubmit={onSubmit}
     >
       <input
-        className="flex-1 px-4 py-2 rounded-full focus:outline-none"
+        css={tw`flex-1 px-4 py-2 rounded-full focus:outline-none`}
         ref={ref}
         name="message"
         type="text"
@@ -29,7 +30,7 @@ export default function MessageBox({
         onChange={onChange}
       />
       <button
-        className="px-4 text-sm font-semibold focus:outline-none"
+        css={tw`px-4 text-sm font-semibold focus:outline-none`}
         type="submit"
       >
         Send

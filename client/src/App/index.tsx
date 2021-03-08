@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import tw from 'twin.macro';
 import ChatBox from '../components/ChatBox';
 import MessageBox from '../components/MessageBox';
 import NameForm from '../components/NameForm';
@@ -69,13 +70,15 @@ export default function App() {
   }, [isLoggedIn, user]);
 
   return (
-    <div className="h-screen">
+    <div css={tw`h-screen`}>
       {isLoggedIn ? (
-        <div className="flex items-stretch h-full">
+        <div css={tw`flex items-stretch h-full`}>
           <Sidebar users={users} />
-          <div className="flex flex-col flex-1">
-            <div className="border-b border-gray-200 h-14" />
-            <div className="flex flex-col justify-between flex-1 h-full px-4 pb-4 overflow-hidden">
+          <div css={tw`flex flex-col flex-1`}>
+            <div css={tw`border-b border-gray-200 h-14`} />
+            <div
+              css={tw`flex flex-col justify-between flex-1 h-full px-4 pb-4 overflow-hidden`}
+            >
               <ChatBox entries={chatMessages} />
               <MessageBox
                 textInputVal={inputState.message}
@@ -86,7 +89,7 @@ export default function App() {
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-center h-full">
+        <div css={tw`flex items-center justify-center h-full`}>
           <NameForm
             textInputVal={inputState.displayName}
             onSubmit={(e) => handleNameSubmit(e)}
