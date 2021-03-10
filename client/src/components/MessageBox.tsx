@@ -21,7 +21,7 @@ export default function MessageBox({
       onSubmit={onSubmit}
     >
       <input
-        css={tw`flex-1 px-4 py-2 rounded-full focus:outline-none`}
+        css={tw`flex-1 px-4 py-2 rounded-full`}
         ref={ref}
         name="message"
         type="text"
@@ -29,10 +29,7 @@ export default function MessageBox({
         value={textInputVal}
         onChange={onChange}
       />
-      <button
-        css={tw`px-4 text-sm font-semibold focus:outline-none`}
-        type="submit"
-      >
+      <button css={tw`px-4 text-sm font-semibold`} type="submit">
         Send
       </button>
     </form>

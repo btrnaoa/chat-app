@@ -17,7 +17,7 @@ export default function NameForm({
       onSubmit={onSubmit}
     >
       <input
-        css={tw`px-4 py-2 border rounded-full focus:outline-none`}
+        css={tw`px-4 py-2 border rounded-full`}
         name="displayName"
         type="text"
         placeholder="Display name"
