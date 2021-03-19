@@ -4,9 +4,9 @@ import { GlobalStyles } from 'twin.macro';
 import App from './App';
 
 render(
-  <React.StrictMode>
+  <>
     <GlobalStyles />
     <App />
-  </React.StrictMode>,
+  </>,
   document.getElementById('root'),
 );

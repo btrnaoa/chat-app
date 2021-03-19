@@ -9,8 +9,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently \"yarn workspace server start\" \"yarn workspace client start\"",
-    "heroku-postbuild": "yarn && yarn workspace client build"
+    "start": "yarn workspace server start",
+    "dev": "concurrently \"yarn workspace server dev\" \"yarn workspace client start\"",
+    "heroku-postbuild": "yarn workspace client build && yarn workspace server build"
   },
   "devDependencies": {
     "concurrently": "^6.0.0"

@@ -1,8 +1,7 @@
 import React from 'react';
 import tw from 'twin.macro';
-import Button from './Button';
 
-export default function NameForm({
+export default function MessageInput({
   value,
   onChange,
   onSubmit,
@@ -12,16 +11,21 @@ export default function NameForm({
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <form css={tw`flex`} onSubmit={onSubmit}>
+    <form
+      css={tw`flex text-gray-700 border rounded-full`}
+      autoComplete="off"
+      onSubmit={onSubmit}
+    >
       <input
-        css={tw`px-4 py-2 border rounded-full`}
-        name="displayName"
+        css={tw`flex-1 px-4 py-2 rounded-full`}
         type="text"
-        placeholder="Display name"
+        placeholder="Message"
         value={value}
         onChange={onChange}
       />
-      <Button css={tw`ml-2`}>Enter</Button>
+      <button css={tw`px-4 text-sm font-semibold`} type="submit">
+        Send
+      </button>
     </form>
   );
 }

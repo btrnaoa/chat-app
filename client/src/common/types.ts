@@ -1,10 +1,6 @@
-export interface ChatMessageProps {
-  heading: string;
-  time?: number;
-  message?: string;
-}
-
-export interface User {
-  id: string;
-  name: string;
+export interface Message {
+  id?: string;
+  timestamp: string;
+  user: string;
+  content: string;
 }

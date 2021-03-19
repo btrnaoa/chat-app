@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twin.macro';
-import { User } from '../common/types';
 
-export default function Sidebar({ users }: { users: User[] }) {
+export default function Sidebar({ users }: { users: string[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -39,33 +38,28 @@ export default function Sidebar({ users }: { users: User[] }) {
           </h1>
           <ul>
             {users.map((user) => (
-              <li
-                key={user.id}
-                css={tw`px-4 py-1 text-white hover:bg-indigo-600`}
-              >
-                {user.name}
+              <li key={user} css={tw`px-4 py-1 text-white hover:bg-indigo-600`}>
+                {user}
               </li>
             ))}
           </ul>
         </div>
       </div>
-      {!isOpen && (
-        <button
-          css={tw`absolute p-2 mt-1 ml-1 sm:hidden`}
-          type="button"
-          onClick={() => setIsOpen(true)}
+      <button
+        css={tw`absolute m-3 sm:hidden`}
+        type="button"
+        onClick={() => setIsOpen(true)}
+      >
+        <svg
+          css={tw`w-8 h-8 text-indigo-500 fill-current`}
+          height="512"
+          viewBox="0 0 64 64"
+          width="512"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <svg
-            css={tw`w-8 h-8 text-indigo-500 fill-current`}
-            height="512"
-            viewBox="0 0 64 64"
-            width="512"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M50 8H14c-3.309 0-6 2.691-6 6v36c0 3.309 2.691 6 6 6h36c3.309 0 6-2.691 6-6V14c0-3.309-2.691-6-6-6zM12 50V14c0-1.103.897-2 2-2h8v40h-8c-1.103 0-2-.897-2-2zm40 0c0 1.103-.897 2-2 2H26V12h24c1.103 0 2 .897 2 2z" />
-          </svg>
-        </button>
-      )}
+          <path d="M50 8H14c-3.309 0-6 2.691-6 6v36c0 3.309 2.691 6 6 6h36c3.309 0 6-2.691 6-6V14c0-3.309-2.691-6-6-6zM12 50V14c0-1.103.897-2 2-2h8v40h-8c-1.103 0-2-.897-2-2zm40 0c0 1.103-.897 2-2 2H26V12h24c1.103 0 2 .897 2 2z" />
+        </svg>
+      </button>
     </>
   );
 }
