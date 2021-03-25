@@ -1,4 +1,3 @@
-import React from 'react';
 import tw from 'twin.macro';
 import { Message } from '../common/types';
 

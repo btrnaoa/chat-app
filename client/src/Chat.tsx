@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { gql, useMutation, useSubscription } from '@apollo/client';
 import tw from 'twin.macro';
 import ChatMessageList from './components/ChatMessageList';

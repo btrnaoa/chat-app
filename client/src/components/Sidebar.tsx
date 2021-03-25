@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import tw from 'twin.macro';
 
 export default function Sidebar({ users }: { users: string[] }) {
