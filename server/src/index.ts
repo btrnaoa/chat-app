@@ -8,7 +8,7 @@ const typeDefs = gql`
   type Message {
     id: ID!
     timestamp: String!
-    user: String!
+    user: String
     content: String!
   }
 
@@ -33,6 +33,17 @@ const subscribers = [];
 
 const updateSubscribers = () => subscribers.forEach((callback) => callback());
 
+const createMessage = (user, content) => {
+  const id = uuid();
+  const timestamp = Date.now();
+  return {
+    id,
+    timestamp,
+    user,
+    content,
+  };
+};
+
 const resolvers = {
   Query: {
     messages: () => messages,
@@ -40,16 +51,10 @@ const resolvers = {
   },
   Mutation: {
     createMessage: (_parent, { user, content }) => {
-      const id = uuid();
-      const timestamp = Date.now();
-      messages.push({
-        id,
-        timestamp,
-        user,
-        content,
-      });
+      const message = createMessage(user, content);
+      messages.push(message);
       updateSubscribers();
-      return id;
+      return message.id;
     },
   },
   Subscription: {
@@ -79,7 +84,7 @@ const subscriptions = {
   onConnect: (connectionParams, _webSocket, _context) => {
     const { user } = connectionParams as any;
     if (user) {
-      console.log(`${user} connected!`);
+      messages.push(createMessage(null, `${user} has joined!`));
       users.push(user);
       updateSubscribers();
       return {
@@ -91,7 +96,6 @@ const subscriptions = {
     const initContext = await context.initPromise;
     if (initContext) {
       const { user } = initContext;
-      console.log(`${user} disconnected.`);
       users.splice(users.indexOf(user), 1);
       updateSubscribers();
     }
