@@ -1,11 +1,11 @@
 export type Message = {
-  id: number;
+  message_id: number;
   content: string;
-  createdAt: string;
+  created_at: string;
   user: User;
 };
 
 export type User = {
-  id: number;
-  name: string;
+  user_id: number;
+  username: string;
 };
