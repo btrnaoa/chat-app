@@ -1,10 +1,9 @@
-import { createMessage, createUser } from '../../api';
-import { updateSubscriptions } from '../subscriptions';
+import { createMessage, createUser, getAllMessages } from '../../api';
 
 export default {
-  createMessage: async (_parent, { userId, content }) => {
+  createMessage: async (_parent, { userId, content }, { pubsub }) => {
     const { message_id } = await createMessage(userId, content);
-    updateSubscriptions();
+    pubsub.publish('ALL_CHAT', { messages: await getAllMessages() });
     return message_id;
   },
   createUser: async (_parent, { name }) => {
