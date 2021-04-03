@@ -6,8 +6,8 @@ import MessageInput from './components/MessageInput';
 import Sidebar from './components/Sidebar';
 
 const CREATE_MESSAGE = gql`
-  mutation($userId: ID!, $content: String!) {
-    createMessage(userId: $userId, content: $content)
+  mutation($userId: ID!, $content: String!, $conversationId: ID!) {
+    createMessage(userId: $userId, content: $content, conversationId: $conversationId)
   }
 `;
 
@@ -58,7 +58,7 @@ export default function Chat({ currentUser }: { currentUser: string }) {
             onSubmit={(e) => {
               e.preventDefault();
               createMessage({
-                variables: { userId, content: messageContent },
+                variables: { userId, content: messageContent, conversationId: 1 },
               });
               setMessageContent('');
             }}
