@@ -1,11 +1,13 @@
-import { getAllMessages } from '../../api';
+import { withFilter } from 'apollo-server-express';
 
 export default {
-  messages: {
-    subscribe: async (_parent, _args, { pubsub }) => {
-      const channel = 'ALL_CHAT';
-      setTimeout(async () => pubsub.publish(channel, { messages: await getAllMessages() }), 0);
-      return pubsub.asyncIterator([channel]);
-    },
+  newMessage: {
+    subscribe: (rootValue: any, args: any, context: any) =>
+      withFilter(
+        () => context.pubsub.asyncIterator('MESSAGE_CREATED'),
+        (payload, variables) =>
+          payload.newMessage.conversation.id ===
+          Number(variables.conversationId),
+      )(rootValue, args, context),
   },
 };

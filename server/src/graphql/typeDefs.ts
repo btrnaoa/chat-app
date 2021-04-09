@@ -1,14 +1,17 @@
-import { gql } from 'apollo-server-core';
+import { gql } from 'apollo-server-express';
 
 export default gql`
   type User {
     id: ID!
     name: String!
+    messages: [Message!]
+    conversations: [Conversation!]
   }
 
   type Conversation {
     id: ID!
-    isPrivate: Boolean!
+    messages: [Message!]
+    users: [User!]
   }
 
   type Message {
@@ -20,16 +23,16 @@ export default gql`
   }
 
   type Query {
-    messages: [Message!]
+    conversation(conversationId: ID!): Conversation
   }
 
   type Mutation {
-    createConversation(isPrivate: Boolean = false): ID!
-    createMessage(userId: ID!, content: String!, conversationId: ID!): ID!
-    createUser(name: String!): ID!
+    createConversation(userId: ID!): ID!
+    createMessage(conversationId: ID!, userId: ID!, content: String!): ID!
+    createUser(name: String!): User!
   }
 
   type Subscription {
-    messages: [Message!]
+    newMessage(conversationId: ID!): Message!
   }
 `;
