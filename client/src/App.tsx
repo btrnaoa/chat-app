@@ -2,7 +2,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { useEffect } from 'react';
 import Chat from './Chat';
-import NameForm from './components/NameForm';
+import LoginPage from './components/LoginPage';
 import { UserProvider } from './context/user-context';
 
 const link = new WebSocketLink({
@@ -30,7 +30,7 @@ export default function App() {
     <ApolloProvider client={client}>
       <UserProvider>
         <Chat />
-        <NameForm />
+        <LoginPage />
       </UserProvider>
     </ApolloProvider>
   );

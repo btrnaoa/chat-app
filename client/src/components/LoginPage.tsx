@@ -13,7 +13,7 @@ const CREATE_USER = gql`
   }
 `;
 
-export default function NameForm() {
+export default function LoginPage() {
   const [value, setValue] = useState('');
   const { user, setUser } = useUser();
   const [createUser] = useMutation(CREATE_USER, {
