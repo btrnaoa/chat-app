@@ -1,31 +1,45 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  ApolloProvider,
+  DocumentNode,
+  HttpLink,
+  InMemoryCache,
+  split,
+} from '@apollo/client';
 import { WebSocketLink } from '@apollo/client/link/ws';
-import { useEffect } from 'react';
+import { getMainDefinition } from '@apollo/client/utilities';
 import Chat from './Chat';
 import LoginPage from './components/LoginPage';
 import { UserProvider } from './context/user-context';
 
-const link = new WebSocketLink({
-  uri: `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
-    window.location.host
-  }/subscriptions`,
+const httpLink = new HttpLink({
+  uri: 'http://localhost:4000/graphql',
+});
+
+const wsLink = new WebSocketLink({
+  uri: 'ws://localhost:4000/subscriptions',
   options: {
     reconnect: true,
   },
 });
 
+const splitLink = split(
+  (operation: { query: DocumentNode }) => {
+    const def = getMainDefinition(operation.query);
+    return (
+      def.kind === 'OperationDefinition' && def.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLink,
+);
+
 const client = new ApolloClient({
-  link,
+  link: splitLink,
   cache: new InMemoryCache(),
 });
 
 export default function App() {
-  useEffect(
-    () => () => {
-      client.clearStore();
-    },
-    [],
-  );
   return (
     <ApolloProvider client={client}>
       <UserProvider>
