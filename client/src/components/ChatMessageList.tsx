@@ -12,7 +12,9 @@ export default function ChatMessageList({
   messages,
   subscribeToNewMessages,
 }: ChatMessageListProps) {
-  useEffect(() => subscribeToNewMessages(), [subscribeToNewMessages]);
+  useEffect(() => {
+    subscribeToNewMessages();
+  }, [subscribeToNewMessages]);
   return (
     <div
       css={tw`flex flex-col-reverse h-full mb-4 overflow-hidden hover:overflow-y-auto`}

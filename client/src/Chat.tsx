@@ -1,11 +1,20 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import tw from 'twin.macro';
-import { Message } from './common/types';
 import ChatMessageList from './components/ChatMessageList';
 import MessageInput from './components/MessageInput';
 import Sidebar from './components/Sidebar';
 import { useUser } from './context/user-context';
+
+const CREATE_MESSAGE = gql`
+  mutation($conversationId: ID!, $userId: ID!, $content: String!) {
+    createMessage(
+      conversationId: $conversationId
+      userId: $userId
+      content: $content
+    )
+  }
+`;
 
 const CONVERSATION_QUERY = gql`
   query($conversationId: ID!) {
@@ -20,16 +29,6 @@ const CONVERSATION_QUERY = gql`
         }
       }
     }
-  }
-`;
-
-const CREATE_MESSAGE = gql`
-  mutation($conversationId: ID!, $userId: ID!, $content: String!) {
-    createMessage(
-      conversationId: $conversationId
-      userId: $userId
-      content: $content
-    )
   }
 `;
 
@@ -53,12 +52,30 @@ export default function Chat() {
 
   const [createMessage] = useMutation(CREATE_MESSAGE);
 
-  const { subscribeToMore, data } = useQuery(CONVERSATION_QUERY, {
+  const { data, subscribeToMore } = useQuery(CONVERSATION_QUERY, {
     variables: { conversationId },
   });
 
-  const messages: Message[] =
-    (data && data.conversation && data.conversation.messages) || [];
+  const subscribeToNewMessages = useCallback(
+    () =>
+      subscribeToMore({
+        document: MESSAGES_SUBSCRIPTION,
+        variables: { conversationId },
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev;
+          return {
+            ...prev,
+            conversation: {
+              messages: [
+                ...prev.conversation.messages,
+                subscriptionData.data.newMessage,
+              ],
+            },
+          };
+        },
+      }),
+    [conversationId, subscribeToMore],
+  );
 
   return (
     user && (
@@ -71,33 +88,19 @@ export default function Chat() {
 
             <div css={tw`flex flex-col flex-1 px-4 pb-4 overflow-hidden`}>
               <ChatMessageList
-                messages={messages}
-                subscribeToNewMessages={() => {
-                  subscribeToMore({
-                    document: MESSAGES_SUBSCRIPTION,
-                    variables: { conversationId },
-                    updateQuery: (prev, { subscriptionData }) => {
-                      if (!subscriptionData.data) return prev;
-                      return {
-                        ...prev,
-                        conversation: {
-                          messages: [
-                            ...prev.conversation.messages,
-                            subscriptionData.data.newMessage,
-                          ],
-                        },
-                      };
-                    },
-                  });
-                }}
+                messages={
+                  (data && data.conversation && data.conversation.messages) ||
+                  []
+                }
+                subscribeToNewMessages={subscribeToNewMessages}
               />
               <MessageInput
                 handleMessage={(content) =>
                   createMessage({
                     variables: {
                       conversationId,
-                      userId: user.id,
                       content,
+                      userId: user.id,
                     },
                   })
                 }
