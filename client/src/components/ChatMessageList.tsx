@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import tw from 'twin.macro';
+import 'twin.macro';
 import { Message } from '../common/types';
 import ChatMessage from './ChatMessage';
 
@@ -16,9 +16,7 @@ export default function ChatMessageList({
     subscribeToNewMessages();
   }, [subscribeToNewMessages]);
   return (
-    <div
-      css={tw`flex flex-col-reverse h-full mb-4 overflow-hidden hover:overflow-y-auto`}
-    >
+    <div tw="flex flex-col-reverse h-full mb-4 overflow-hidden hover:overflow-y-auto">
       <div>
         {messages.map(({ id, content, createdAt, user }) => (
           <ChatMessage

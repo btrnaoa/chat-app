@@ -33,23 +33,19 @@ export default function Sidebar({
   return (
     <>
       <div
-        css={[
-          !isOpen && tw`transform -translate-x-64`,
-          tw`absolute z-10 w-64 h-full text-indigo-100 transition-all duration-300 bg-indigo-700 sm:static sm:translate-x-0`,
-        ]}
+        tw="absolute z-10 w-64 h-full text-indigo-100 transition-all duration-300 bg-indigo-700 sm:static sm:translate-x-0"
+        css={[!isOpen && tw`transform -translate-x-64`]}
         ref={ref}
       >
         <div>
-          <h1
-            css={tw`px-4 py-2 text-xs font-semibold tracking-wider uppercase`}
-          >
+          <h1 tw="px-4 py-2 text-xs font-semibold tracking-wider uppercase">
             Channels
           </h1>
           <ul>
             {channels.map(({ id, name, conversation }) => (
               <li
+                tw="px-4 py-1 text-white cursor-pointer hover:bg-indigo-600"
                 key={id}
-                css={tw`px-4 py-1 text-white cursor-pointer hover:bg-indigo-600`}
                 onClick={() => handleChannelClick(conversation.id)}
                 aria-hidden
               >
@@ -60,12 +56,12 @@ export default function Sidebar({
         </div>
       </div>
       <button
-        css={tw`absolute m-3 sm:hidden`}
+        tw="absolute m-3 sm:hidden"
         type="button"
         onClick={() => setIsOpen(true)}
       >
         <svg
-          css={tw`w-8 h-8 text-indigo-500 fill-current`}
+          tw="w-8 h-8 text-indigo-500 fill-current"
           height="512"
           viewBox="0 0 64 64"
           width="512"

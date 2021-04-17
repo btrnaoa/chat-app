@@ -1,8 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
-import tw from 'twin.macro';
+import 'twin.macro';
 import { useUser } from '../context/user-context';
 import Button from './Button';
+import Container from './Container';
 
 const CREATE_USER = gql`
   mutation($name: String!) {
@@ -21,9 +22,9 @@ export default function LoginPage() {
   });
   if (user) return null;
   return (
-    <div css={tw`flex items-center justify-center h-screen`}>
+    <Container>
       <form
-        css={tw`flex`}
+        tw="flex"
         onSubmit={(event) => {
           event.preventDefault();
           createUser({ variables: { name: value } });
@@ -31,15 +32,15 @@ export default function LoginPage() {
         }}
       >
         <input
-          css={tw`px-4 py-2 border rounded-full`}
+          tw="px-4 py-2 border rounded-full"
           name="displayName"
           type="text"
           placeholder="Display name"
           value={value}
           onChange={(event) => setValue(event.target.value)}
         />
-        <Button css={tw`ml-2`}>Enter</Button>
+        <Button tw="ml-2">Enter</Button>
       </form>
-    </div>
+    </Container>
   );
 }

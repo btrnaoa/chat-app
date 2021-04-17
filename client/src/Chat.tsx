@@ -1,8 +1,9 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useCallback, useEffect, useState } from 'react';
-import tw from 'twin.macro';
+import 'twin.macro';
 import { Channel } from './common/types';
 import ChatMessageList from './components/ChatMessageList';
+import Container from './components/Container';
 import Header from './components/Header';
 import MessageInput from './components/MessageInput';
 import Sidebar from './components/Sidebar';
@@ -103,13 +104,13 @@ export default function Chat() {
 
   return (
     user && (
-      <div css={tw`flex items-center justify-center h-screen`}>
-        <div css={tw`flex w-full h-full`}>
+      <Container>
+        <div tw="flex w-full h-full">
           <Sidebar
             channels={channels}
             handleChannelClick={(id) => setConversationId(id)}
           />
-          <div css={tw`flex flex-col flex-1`}>
+          <div tw="flex flex-col flex-1">
             <Header>
               <p>
                 {
@@ -120,7 +121,7 @@ export default function Chat() {
                 }
               </p>
             </Header>
-            <div css={tw`flex flex-col flex-1 px-4 pb-4 overflow-hidden`}>
+            <div tw="flex flex-col flex-1 px-4 pb-4 overflow-hidden">
               <ChatMessageList
                 messages={messages}
                 subscribeToNewMessages={subscribeToNewMessages}
@@ -139,7 +140,7 @@ export default function Chat() {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     )
   );
 }
