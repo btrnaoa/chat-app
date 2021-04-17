@@ -4,13 +4,6 @@ import Message from '../../entities/Message';
 import User from '../../entities/User';
 
 export default {
-  createConversation: async (_: any, args: any) => {
-    const repository = getRepository(Conversation);
-    const user = await getRepository(User).findOne(args.userId);
-    let conversation = repository.create({ users: [{ ...user }] });
-    conversation = await repository.save(conversation);
-    return conversation.id;
-  },
   createMessage: async (_: any, args: any, context: any) => {
     const repository = getRepository(Message);
     const conversation = await getRepository(Conversation).findOne(

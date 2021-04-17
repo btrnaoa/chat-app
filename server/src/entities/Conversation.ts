@@ -1,4 +1,10 @@
-import { Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import Message from './Message';
 import User from './User';
 
@@ -10,7 +16,7 @@ export default class Conversation {
   @OneToMany(() => Message, (message) => message.conversation)
   messages: Message[];
 
-  @ManyToMany(() => User, (user) => user.conversations, { cascade: true })
+  @ManyToMany(() => User, (user) => user.conversations)
   @JoinTable()
   users: User[];
 }
