@@ -17,8 +17,7 @@ export default function LoginPage() {
   const [value, setValue] = useState('');
   const { user, setUser } = useUser();
   const [createUser] = useMutation(CREATE_USER, {
-    onCompleted: ({ createUser: { id, name } }) =>
-      setUser({ id: Number(id), name }),
+    onCompleted: ({ createUser: { id, name } }) => setUser({ id, name }),
   });
   if (user) return null;
   return (
