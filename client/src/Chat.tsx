@@ -1,7 +1,9 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import tw from 'twin.macro';
+import { Channel } from './common/types';
 import ChatMessageList from './components/ChatMessageList';
+import Header from './components/Header';
 import MessageInput from './components/MessageInput';
 import Sidebar from './components/Sidebar';
 import { useUser } from './context/user-context';
@@ -13,6 +15,18 @@ const CREATE_MESSAGE = gql`
       userId: $userId
       content: $content
     )
+  }
+`;
+
+const CHANNEL_QUERY = gql`
+  query {
+    channels {
+      id
+      name
+      conversation {
+        id
+      }
+    }
   }
 `;
 
@@ -46,13 +60,19 @@ const MESSAGES_SUBSCRIPTION = gql`
 `;
 
 export default function Chat() {
-  const [conversationId] = useState(1);
+  const [conversationId, setConversationId] = useState('1');
 
   const { user } = useUser();
 
   const [createMessage] = useMutation(CREATE_MESSAGE);
 
-  const { data, subscribeToMore } = useQuery(CONVERSATION_QUERY, {
+  const { data: { channels = [] } = {} } = useQuery(CHANNEL_QUERY);
+
+  const {
+    data: { conversation: { messages = [] } = {} } = {},
+    refetch,
+    subscribeToMore,
+  } = useQuery(CONVERSATION_QUERY, {
     variables: { conversationId },
   });
 
@@ -77,21 +97,32 @@ export default function Chat() {
     [conversationId, subscribeToMore],
   );
 
+  useEffect(() => {
+    refetch();
+  }, [conversationId, refetch]);
+
   return (
     user && (
       <div css={tw`flex items-center justify-center h-screen`}>
         <div css={tw`flex w-full h-full`}>
-          <Sidebar users={[]} />
+          <Sidebar
+            channels={channels}
+            handleChannelClick={(id) => setConversationId(id)}
+          />
           <div css={tw`flex flex-col flex-1`}>
-            {/* Chat header placeholder */}
-            <div css={tw`border-b border-gray-200 h-14`} />
-
+            <Header>
+              <p>
+                {
+                  channels.find(
+                    (channel: Channel) =>
+                      channel.conversation.id === conversationId,
+                  ).name
+                }
+              </p>
+            </Header>
             <div css={tw`flex flex-col flex-1 px-4 pb-4 overflow-hidden`}>
               <ChatMessageList
-                messages={
-                  (data && data.conversation && data.conversation.messages) ||
-                  []
-                }
+                messages={messages}
                 subscribeToNewMessages={subscribeToNewMessages}
               />
               <MessageInput

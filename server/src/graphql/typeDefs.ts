@@ -1,11 +1,10 @@
 import { gql } from 'apollo-server-express';
 
 export default gql`
-  type User {
+  type Channel {
     id: ID!
     name: String!
-    messages: [Message!]
-    conversations: [Conversation!]
+    conversation: Conversation!
   }
 
   type Conversation {
@@ -22,7 +21,15 @@ export default gql`
     conversation: Conversation!
   }
 
+  type User {
+    id: ID!
+    name: String!
+    messages: [Message!]
+    conversations: [Conversation!]
+  }
+
   type Query {
+    channels: [Channel!]
     conversation(conversationId: ID!): Conversation
   }
 

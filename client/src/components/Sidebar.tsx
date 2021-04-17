@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import tw from 'twin.macro';
+import { Channel } from '../common/types';
 
-export default function Sidebar({ users }: { users: string[] }) {
+type SidebarProps = {
+  channels: Channel[];
+  handleChannelClick: (id: string) => void;
+};
+
+export default function Sidebar({
+  channels,
+  handleChannelClick,
+}: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -34,12 +43,17 @@ export default function Sidebar({ users }: { users: string[] }) {
           <h1
             css={tw`px-4 py-2 text-xs font-semibold tracking-wider uppercase`}
           >
-            Users
+            Channels
           </h1>
           <ul>
-            {users.map((user) => (
-              <li key={user} css={tw`px-4 py-1 text-white hover:bg-indigo-600`}>
-                {user}
+            {channels.map(({ id, name, conversation }) => (
+              <li
+                key={id}
+                css={tw`px-4 py-1 text-white cursor-pointer hover:bg-indigo-600`}
+                onClick={() => handleChannelClick(conversation.id)}
+                aria-hidden
+              >
+                {name}
               </li>
             ))}
           </ul>
