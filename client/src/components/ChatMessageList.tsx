@@ -5,7 +5,7 @@ import ChatMessage from './ChatMessage';
 
 type ChatMessageListProps = {
   messages: Message[];
-  subscribeToNewMessages: () => void;
+  subscribeToNewMessages: () => () => void;
 };
 
 export default function ChatMessageList({
@@ -13,7 +13,8 @@ export default function ChatMessageList({
   subscribeToNewMessages,
 }: ChatMessageListProps) {
   useEffect(() => {
-    subscribeToNewMessages();
+    const unsubscribe = subscribeToNewMessages();
+    return () => unsubscribe();
   }, [subscribeToNewMessages]);
   return (
     <div tw="flex flex-col-reverse h-full mb-4 overflow-hidden hover:overflow-y-auto">
