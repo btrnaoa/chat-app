@@ -1,13 +1,13 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useCallback, useEffect, useState } from 'react';
 import 'twin.macro';
-import { Channel } from './common/types';
-import ChatMessageList from './components/ChatMessageList';
-import Container from './components/Container';
-import Header from './components/Header';
-import MessageInput from './components/MessageInput';
-import Sidebar from './components/Sidebar';
-import { useUser } from './context/user-context';
+import { Channel } from '../common/types';
+import Container from '../components/Container';
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
+import { useUser } from '../context/user-context';
+import MessageInput from './MessageInput';
+import MessageList from './MessageList';
 
 const CREATE_MESSAGE = gql`
   mutation($conversationId: ID!, $userId: ID!, $content: String!) {
@@ -122,7 +122,7 @@ export default function Chat() {
               </p>
             </Header>
             <div tw="flex flex-col flex-1 px-4 pb-4 overflow-hidden">
-              <ChatMessageList
+              <MessageList
                 messages={messages}
                 subscribeToNewMessages={subscribeToNewMessages}
               />

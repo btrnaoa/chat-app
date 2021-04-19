@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 import 'twin.macro';
 import { Message } from '../common/types';
-import ChatMessage from './ChatMessage';
+import MessageItem from './MessageItem';
 
-type ChatMessageListProps = {
+type MessageListProps = {
   messages: Message[];
   subscribeToNewMessages: () => () => void;
 };
 
-export default function ChatMessageList({
+export default function MessageList({
   messages,
   subscribeToNewMessages,
-}: ChatMessageListProps) {
+}: MessageListProps) {
   useEffect(() => {
     const unsubscribe = subscribeToNewMessages();
     return () => unsubscribe();
@@ -20,7 +20,7 @@ export default function ChatMessageList({
     <div tw="flex flex-col-reverse h-full mb-4 overflow-hidden hover:overflow-y-auto">
       <div>
         {messages.map(({ id, content, createdAt, user }) => (
-          <ChatMessage
+          <MessageItem
             key={id}
             content={content}
             createdAt={createdAt}
