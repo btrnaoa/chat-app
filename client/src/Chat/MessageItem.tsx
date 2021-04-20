@@ -7,7 +7,7 @@ export default function MessageItem({
   user,
 }: Omit<Message, 'id'>) {
   return (
-    <div tw="flex flex-col px-4 py-2 text-gray-700 break-all">
+    <li tw="flex flex-col px-4 py-2 text-gray-700 break-all">
       <div>
         <span tw="font-bold">{user.name}</span>
         <span tw="ml-4 text-xs text-gray-500">
@@ -17,7 +17,7 @@ export default function MessageItem({
           })}
         </span>
       </div>
-      {content}
-    </div>
+      <p>{content}</p>
+    </li>
   );
 }

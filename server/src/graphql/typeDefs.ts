@@ -30,6 +30,7 @@ export default gql`
 
   type Query {
     channels: [Channel!]
+    channel(conversationId: ID!): Channel
     conversation(conversationId: ID!): Conversation
   }
 
