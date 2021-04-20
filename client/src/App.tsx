@@ -9,7 +9,7 @@ import {
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import Chat from './Chat';
-import LoginPage from './components/LoginPage';
+import Login from './Login';
 import { UserProvider } from './context/user-context';
 
 const httpLink = new HttpLink({
@@ -44,7 +44,7 @@ export default function App() {
     <ApolloProvider client={client}>
       <UserProvider>
         <Chat />
-        <LoginPage />
+        <Login />
       </UserProvider>
     </ApolloProvider>
   );
