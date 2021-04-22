@@ -1,11 +1,10 @@
 import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react';
 import 'twin.macro';
-import { Channel } from '../common/types';
+import { Channel, User } from '../common/types';
 import Container from '../components/Container';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import { useUser } from '../context/user-context';
 import ChannelList from './ChannelList';
 import MessageInput from './MessageInput';
 import MessageList from './MessageList';
@@ -18,15 +17,13 @@ const CHANNEL_QUERY = gql`
   }
 `;
 
-export default function Chat() {
+export default function Chat({ user }: { user: User }) {
   const [conversationId, setConversationId] = useState('1');
-  const { user } = useUser();
 
   const { data: { channel = null } = {} } = useQuery<{
     channel: Channel | null;
   }>(CHANNEL_QUERY, { variables: { conversationId } });
 
-  if (!user) return null;
   return (
     <Container>
       <div tw="flex w-full h-full">

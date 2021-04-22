@@ -1,9 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
 import 'twin.macro';
+import { User } from './common/types';
 import Button from './components/Button';
 import Container from './components/Container';
-import { useUser } from './context/user-context';
 
 const CREATE_USER = gql`
   mutation($name: String!) {
@@ -14,15 +14,17 @@ const CREATE_USER = gql`
   }
 `;
 
-export default function Login() {
+export default function Login({
+  handleUser,
+}: {
+  handleUser: (user: User) => void;
+}) {
   const [displayName, setDisplayName] = useState('');
-  const { user, setUser } = useUser();
 
-  const [createUser] = useMutation(CREATE_USER, {
-    onCompleted: ({ createUser: { id, name } }) => setUser({ id, name }),
+  const [createUser] = useMutation<{ createUser: User }>(CREATE_USER, {
+    onCompleted: ({ createUser: { id, name } }) => handleUser({ id, name }),
   });
 
-  if (user) return null;
   return (
     <Container>
       <form
