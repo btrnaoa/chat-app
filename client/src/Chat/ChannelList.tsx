@@ -1,6 +1,8 @@
 import { gql, useQuery } from '@apollo/client';
 import 'twin.macro';
 import { Channel } from '../common/types';
+import Heading from '../components/Sidebar/Heading';
+import ListItem from '../components/Sidebar/ListItem';
 
 const CHANNEL_QUERY = gql`
   query {
@@ -24,20 +26,16 @@ export default function ChannelList({
   );
   return (
     <>
-      <h2 tw="px-4 py-2 text-xs font-semibold tracking-wider uppercase">
-        Channels
-      </h2>
+      <Heading>Channels</Heading>
       <ul>
         {channels.map(({ id, name, conversation }) => (
-          <li
+          <ListItem
             key={id}
             onClick={() => handleChannelClick(conversation.id)}
             aria-hidden
           >
-            <p tw="px-4 py-1 text-white cursor-pointer hover:bg-indigo-600">
-              {name}
-            </p>
-          </li>
+            {name}
+          </ListItem>
         ))}
       </ul>
     </>
