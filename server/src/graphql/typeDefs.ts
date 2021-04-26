@@ -24,12 +24,14 @@ export default gql`
   type User {
     id: ID!
     name: String!
+    isOnline: Boolean!
     messages: [Message!]
     conversations: [Conversation!]
   }
 
   type Query {
     channels: [Channel!]
+    onlineUsers: [User!]
     channel(conversationId: ID!): Channel
     conversation(conversationId: ID!): Conversation
   }

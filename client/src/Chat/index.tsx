@@ -8,6 +8,7 @@ import Sidebar from '../components/Sidebar';
 import ChannelList from './ChannelList';
 import MessageInput from './MessageInput';
 import MessageList from './MessageList';
+import UserList from './UserList';
 
 const CHANNEL_QUERY = gql`
   query($conversationId: ID!) {
@@ -29,6 +30,7 @@ export default function Chat({ user }: { user: User }) {
       <div tw="flex w-full h-full">
         <Sidebar>
           <ChannelList handleChannelClick={(id) => setConversationId(id)} />
+          <UserList />
         </Sidebar>
         <div tw="flex flex-col flex-1">
           <Header>{channel && <h1>{channel.name}</h1>}</Header>

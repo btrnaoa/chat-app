@@ -16,6 +16,9 @@ export default class User {
   @Column('varchar', { length: 32 })
   name: string;
 
+  @Column('bool', { default: false })
+  isOnline: boolean;
+
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[];
 
