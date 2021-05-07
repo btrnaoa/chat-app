@@ -9,23 +9,35 @@ import {
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { useState } from 'react';
+import { User } from './common/types';
 import Chat from './Chat';
 import Login from './Login';
-import { User } from './common/types';
 
 const httpLink = new HttpLink({
   uri: 'http://localhost:4000/graphql',
 });
 
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        usersOnline: {
+          merge: false,
+        },
+      },
+    },
+  },
+});
+
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<User['id'] | null>(null);
 
   const wsLink = new WebSocketLink({
     uri: 'ws://localhost:4000/subscriptions',
     options: {
       reconnect: true,
       connectionParams: {
-        user,
+        userId: currentUserId,
       },
     },
   });
@@ -42,13 +54,17 @@ export default function App() {
   );
 
   const client = new ApolloClient({
+    cache,
     link: splitLink,
-    cache: new InMemoryCache(),
   });
 
   return (
     <ApolloProvider client={client}>
-      {user ? <Chat user={user} /> : <Login handleUser={setUser} />}
+      {currentUserId ? (
+        <Chat currentUserId={currentUserId} />
+      ) : (
+        <Login handleUser={setCurrentUserId} />
+      )}
     </ApolloProvider>
   );
 }

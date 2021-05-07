@@ -6,12 +6,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import Conversation from './Conversation';
-import Message from './Message';
+import UserConversation from './UserConversation';
 
 @Entity()
 export default class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column('varchar', { length: 32 })
   name: string;
@@ -19,9 +19,12 @@ export default class User {
   @Column('bool', { default: false })
   isOnline: boolean;
 
-  @OneToMany(() => Message, (message) => message.user)
-  messages: Message[];
-
   @ManyToMany(() => Conversation, (conversation) => conversation.users)
-  conversations: Conversation[];
+  conversations: UserConversation[];
+
+  @OneToMany(
+    () => UserConversation,
+    (userConversation) => userConversation.user,
+  )
+  userConversations: UserConversation[];
 }

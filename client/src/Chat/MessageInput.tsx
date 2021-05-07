@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import 'twin.macro';
+import { Conversation, User } from '../common/types';
 import useCreateMessage from '../hooks/useCreateMessage';
 
 type MessageInputProps = {
-  conversationId: string;
-  userId: string;
+  conversationId: Conversation['id'] | null;
+  userId: User['id'];
 };
 
 export default function MessageInput({
@@ -19,7 +20,9 @@ export default function MessageInput({
       autoComplete="off"
       onSubmit={(event) => {
         event.preventDefault();
-        createMessage(conversationId, userId, messageContent);
+        if (conversationId) {
+          createMessage(messageContent, conversationId, userId);
+        }
         setMessageContent('');
       }}
     >
@@ -29,6 +32,7 @@ export default function MessageInput({
         placeholder="Message"
         value={messageContent}
         onChange={(event) => setMessageContent(event.target.value)}
+        required
       />
       <button tw="px-4 text-sm font-semibold" type="submit">
         Send

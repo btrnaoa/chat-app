@@ -5,24 +5,29 @@ import ListItem from '../components/Sidebar/ListItem';
 
 const GET_ONLINE_USERS = gql`
   query {
-    onlineUsers {
+    usersOnline {
       id
       name
     }
   }
 `;
 
-export default function UserList() {
-  const { data: { onlineUsers = [] } = {} } = useQuery<{ onlineUsers: User[] }>(
-    GET_ONLINE_USERS,
-    { pollInterval: 500 },
-  );
+export default function UserList({
+  handleClick,
+}: {
+  handleClick: (id: User['id']) => void;
+}) {
+  const { data: { usersOnline = [] } = {} } = useQuery<{
+    usersOnline: User[];
+  }>(GET_ONLINE_USERS, { pollInterval: 500 });
   return (
     <>
-      <Heading>Users</Heading>
+      <Heading>Online Users</Heading>
       <ul>
-        {onlineUsers.map(({ id, name }) => (
-          <ListItem key={id}>{name}</ListItem>
+        {usersOnline.map(({ id, name }) => (
+          <ListItem key={id} onClick={() => handleClick(id)} aria-hidden>
+            {name}
+          </ListItem>
         ))}
       </ul>
     </>

@@ -5,7 +5,7 @@ export default function MessageItem({
   content,
   createdAt,
   user,
-}: Omit<Message, 'id'>) {
+}: Pick<Message, 'content' | 'createdAt' | 'user'>) {
   return (
     <li tw="flex flex-col px-4 py-2 text-gray-700 break-all">
       <div>

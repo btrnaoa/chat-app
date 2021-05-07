@@ -1,17 +1,20 @@
 import { gql, useMutation } from '@apollo/client';
+import { Conversation, Message, User } from '../common/types';
 
 const CREATE_MESSAGE = gql`
-  mutation($conversationId: ID!, $userId: ID!, $content: String!) {
-    createMessage(
-      conversationId: $conversationId
-      userId: $userId
-      content: $content
-    )
+  mutation($input: MessageInput!) {
+    createMessage(input: $input)
   }
 `;
 
 export default function useCreateMessage() {
   const [createMessage] = useMutation(CREATE_MESSAGE);
-  return (conversationId: string, userId: string, content: string) =>
-    createMessage({ variables: { conversationId, userId, content } });
+  return (
+    content: Message['content'],
+    conversationId: Conversation['id'],
+    userId: User['id'],
+  ) =>
+    createMessage({
+      variables: { input: { content, conversationId, userId } },
+    });
 }

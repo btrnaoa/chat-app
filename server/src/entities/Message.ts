@@ -4,8 +4,8 @@ import User from './User';
 
 @Entity()
 export default class Message {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   content: string;
@@ -13,7 +13,7 @@ export default class Message {
   @Column('timestamp with time zone', { default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.messages)
+  @ManyToOne(() => User)
   user: User;
 
   @ManyToOne(() => Conversation, (conversation) => conversation.messages)

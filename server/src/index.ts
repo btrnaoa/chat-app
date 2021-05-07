@@ -13,19 +13,19 @@ const pubsub = new PubSub();
 const subscriptions = {
   path: '/subscriptions',
   onConnect: (connectionParams: any) => {
-    const { user } = connectionParams;
-    if (user) {
-      getRepository(User).update(user.id, { isOnline: true });
+    const { userId } = connectionParams;
+    if (userId) {
+      getRepository(User).update(userId, { isOnline: true });
       return {
-        user,
+        userId,
       };
     }
     return connectionParams;
   },
   onDisconnect: async (_: any, context: any) => {
     const ctx = await context.initPromise;
-    if (ctx && ctx.user) {
-      getRepository(User).update(ctx.user.id, { isOnline: false });
+    if (ctx && ctx.userId) {
+      getRepository(User).update(ctx.userId, { isOnline: false });
     }
   },
 };

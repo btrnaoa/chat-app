@@ -1,14 +1,15 @@
 import { gql } from 'apollo-server-express';
 
 export default gql`
-  type Channel {
-    id: ID!
-    name: String!
-    conversation: Conversation!
+  input MessageInput {
+    content: String!
+    userId: ID!
+    conversationId: ID!
   }
 
   type Conversation {
     id: ID!
+    name: String
     messages: [Message!]
     users: [User!]
   }
@@ -18,28 +19,24 @@ export default gql`
     content: String!
     createdAt: String!
     user: User!
-    conversation: Conversation!
   }
 
   type User {
     id: ID!
     name: String!
     isOnline: Boolean!
-    messages: [Message!]
-    conversations: [Conversation!]
   }
 
   type Query {
-    channels: [Channel!]
-    onlineUsers: [User!]
-    channel(conversationId: ID!): Channel
-    conversation(conversationId: ID!): Conversation
+    conversation(userId: ID!, conversationId: ID): Conversation
+    conversations(userId: ID!): [Conversation!]
+    usersOnline: [User!]
   }
 
   type Mutation {
-    createConversation(userId: ID!): ID!
-    createMessage(conversationId: ID!, userId: ID!, content: String!): ID!
-    createUser(name: String!): User!
+    createConversation(userIds: [ID!]!): ID!
+    createMessage(input: MessageInput!): ID!
+    createUser(name: String!, conversationName: String!): ID!
   }
 
   type Subscription {

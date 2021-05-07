@@ -1,11 +1,8 @@
-export type Channel = {
-  id: string;
-  name: string;
-  conversation: Conversation;
-};
-
 export type Conversation = {
   id: string;
+  name?: string;
+  messages: Message[];
+  users: User[];
 };
 
 export type Message = {
