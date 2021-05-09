@@ -111,7 +111,7 @@ export default function Chat({ currentUserId }: { currentUserId: User['id'] }) {
         </Sidebar>
         <div tw="flex flex-col flex-1">
           <Header>
-            <h1>
+            <h1 tw="text-lg">
               {conversationName ||
                 conversationUsers
                   .filter((user) => user.id !== currentUserId)

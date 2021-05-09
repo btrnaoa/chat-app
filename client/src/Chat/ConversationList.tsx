@@ -1,6 +1,8 @@
 import { gql, useQuery } from '@apollo/client';
+import { ChatAlt2Icon } from '@heroicons/react/solid';
+import 'twin.macro';
 import { Conversation, User } from '../common/types';
-import Heading from '../components/Sidebar/Heading';
+import List from '../components/Sidebar/List';
 import ListItem from '../components/Sidebar/ListItem';
 
 const GET_CONVERSATIONS = gql`
@@ -35,19 +37,16 @@ export default function ConversationList({
     (a, b) => Number(!a.name) - Number(!b.name),
   );
   return (
-    <>
-      <Heading>Conversations</Heading>
-      <ul>
-        {conversationsSortedByName.map(({ id, name, users }) => (
-          <ListItem key={id} onClick={() => handleClick(id)} aria-hidden>
-            {name ||
-              users
-                .filter((user) => user.id !== currentUserId)
-                .map((user) => user.name)
-                .join(', ')}
-          </ListItem>
-        ))}
-      </ul>
-    </>
+    <List heading="Conversations" icon={<ChatAlt2Icon />}>
+      {conversationsSortedByName.map(({ id, name, users }) => (
+        <ListItem key={id} onClick={() => handleClick(id)} aria-hidden>
+          {name ||
+            users
+              .filter((user) => user.id !== currentUserId)
+              .map((user) => user.name)
+              .join(', ')}
+        </ListItem>
+      ))}
+    </List>
   );
 }

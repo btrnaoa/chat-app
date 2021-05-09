@@ -1,6 +1,8 @@
 import { gql, useQuery } from '@apollo/client';
+import { UsersIcon } from '@heroicons/react/solid';
+import 'twin.macro';
 import { User } from '../common/types';
-import Heading from '../components/Sidebar/Heading';
+import List from '../components/Sidebar/List';
 import ListItem from '../components/Sidebar/ListItem';
 
 const GET_ONLINE_USERS = gql`
@@ -21,15 +23,12 @@ export default function UserList({
     usersOnline: User[];
   }>(GET_ONLINE_USERS, { pollInterval: 500 });
   return (
-    <>
-      <Heading>Online Users</Heading>
-      <ul>
-        {usersOnline.map(({ id, name }) => (
-          <ListItem key={id} onClick={() => handleClick(id)} aria-hidden>
-            {name}
-          </ListItem>
-        ))}
-      </ul>
-    </>
+    <List heading="Users" icon={<UsersIcon />}>
+      {usersOnline.map(({ id, name }) => (
+        <ListItem key={id} onClick={() => handleClick(id)} aria-hidden>
+          {name}
+        </ListItem>
+      ))}
+    </List>
   );
 }

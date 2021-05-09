@@ -1,3 +1,4 @@
+import { PaperAirplaneIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import 'twin.macro';
 import { Conversation, User } from '../common/types';
@@ -16,7 +17,7 @@ export default function MessageInput({
   const createMessage = useCreateMessage();
   return (
     <form
-      tw="flex text-gray-700 border rounded-full"
+      tw="flex"
       autoComplete="off"
       onSubmit={(event) => {
         event.preventDefault();
@@ -27,15 +28,15 @@ export default function MessageInput({
       }}
     >
       <input
-        tw="flex-1 px-4 py-2 rounded-full"
+        tw="flex-1 px-4 py-2 text-gray-700 placeholder-indigo-500 border border-indigo-100 rounded-xl"
         type="text"
         placeholder="Message"
         value={messageContent}
         onChange={(event) => setMessageContent(event.target.value)}
         required
       />
-      <button tw="px-4 text-sm font-semibold" type="submit">
-        Send
+      <button tw="px-4" type="submit">
+        <PaperAirplaneIcon tw="w-5 h-5 text-indigo-600 transform rotate-90" />
       </button>
     </form>
   );
