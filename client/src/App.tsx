@@ -14,7 +14,7 @@ import Chat from './Chat';
 import Login from './Login';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: `${window.location.origin}/graphql`,
 });
 
 const cache = new InMemoryCache({
@@ -33,7 +33,9 @@ export default function App() {
   const [currentUserId, setCurrentUserId] = useState<User['id'] | null>(null);
 
   const wsLink = new WebSocketLink({
-    uri: 'ws://localhost:4000/subscriptions',
+    uri: `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
+      window.location.host
+    }/subscriptions`,
     options: {
       reconnect: true,
       connectionParams: {

@@ -2,7 +2,7 @@ import { ApolloServer, PubSub } from 'apollo-server-express';
 import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import { resolve } from 'path';
-import { createConnection, getRepository } from 'typeorm';
+import { createConnection, getConnectionOptions, getRepository } from 'typeorm';
 import config from './config';
 import User from './entities/User';
 import typeDefs from './graphql/typeDefs';
@@ -30,32 +30,44 @@ const subscriptions = {
   },
 };
 
-createConnection()
-  .then(() => {
-    const app = express();
-    const server = new ApolloServer({
-      typeDefs,
-      resolvers,
-      subscriptions,
-      context: { pubsub },
-    });
-
+getConnectionOptions()
+  .then((options) => {
     if (process.env.NODE_ENV === 'production') {
-      app.use(express.static(resolve('../client/build')));
-      app.get('*', (_req: Request, res: Response) => {
-        res.sendFile(resolve('../client/build', 'index.html'));
-      });
+      return {
+        ...options,
+        url: process.env.DATABASE_URL,
+      };
     }
-
-    server.applyMiddleware({ app });
-
-    const httpServer = createServer(app);
-    server.installSubscriptionHandlers(httpServer);
-
-    httpServer.listen(config.port, () =>
-      console.log(
-        `Server ready at http://localhost:${config.port}${server.graphqlPath}`,
-      ),
-    );
+    return options;
   })
-  .catch((error) => console.log(error));
+  .then((options) =>
+    createConnection(options)
+      .then(() => {
+        const app = express();
+        const server = new ApolloServer({
+          typeDefs,
+          resolvers,
+          subscriptions,
+          context: { pubsub },
+        });
+
+        if (process.env.NODE_ENV === 'production') {
+          app.use(express.static(resolve('../client/build')));
+          app.get('*', (_req: Request, res: Response) => {
+            res.sendFile(resolve('../client/build', 'index.html'));
+          });
+        }
+
+        server.applyMiddleware({ app });
+
+        const httpServer = createServer(app);
+        server.installSubscriptionHandlers(httpServer);
+
+        httpServer.listen(config.port, () =>
+          console.log(
+            `Server ready at http://localhost:${config.port}${server.graphqlPath}`,
+          ),
+        );
+      })
+      .catch((error) => console.log(error)),
+  );
