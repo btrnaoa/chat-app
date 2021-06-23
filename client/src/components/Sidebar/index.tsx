@@ -25,7 +25,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   return (
     <>
       <div
-        tw="absolute z-10 w-64 h-full text-gray-700 transition bg-white border-r md:shadow-none md:static md:translate-x-0"
+        tw="absolute z-10 w-64 min-h-full text-gray-700 transition border-r bg-gray-50 md:shadow-none md:static md:translate-x-0"
         css={[
           isOpen ? tw`shadow-lg` : tw`transform -translate-x-64 shadow-none`,
         ]}

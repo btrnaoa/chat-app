@@ -1,13 +1,12 @@
 import { gql, useQuery } from '@apollo/client';
-import { ChatAlt2Icon } from '@heroicons/react/solid';
 import 'twin.macro';
-import { Conversation, User } from '../common/types';
+import type { Conversation, User } from '../common/types';
 import List from '../components/Sidebar/List';
 import ListItem from '../components/Sidebar/ListItem';
 
 const GET_CONVERSATIONS = gql`
-  query($userId: ID!) {
-    conversations(userId: $userId) {
+  query GetConversations {
+    conversations {
       id
       name
       users {
@@ -29,15 +28,14 @@ export default function ConversationList({
 }: ConversationListProps) {
   const { data: { conversations = [] } = {} } = useQuery<{
     conversations: Conversation[];
-  }>(GET_CONVERSATIONS, {
-    variables: { userId: currentUserId },
-    pollInterval: 500,
-  });
+  }>(GET_CONVERSATIONS, { pollInterval: 500 });
+
   const conversationsSortedByName = [...conversations].sort(
     (a, b) => Number(!a.name) - Number(!b.name),
   );
+
   return (
-    <List heading="Conversations" icon={<ChatAlt2Icon />}>
+    <List heading="Conversations">
       {conversationsSortedByName.map(({ id, name, users }) => (
         <ListItem key={id} onClick={() => handleClick(id)} aria-hidden>
           {name ||

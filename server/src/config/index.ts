@@ -8,5 +8,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export default {
+  defaultConversationName: process.env.DEFAULT_CONVERSATION_NAME,
   port: parseInt(process.env.PORT!, 10),
 };

@@ -1,17 +1,19 @@
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
 import tw from 'twin.macro';
-import { User } from './common/types';
+import type { User } from './common/types';
 import Button from './components/Button';
 import Container from './components/Container';
+import useAddUserToConversation from './hooks/useAddUserToConversation';
+import useCreateConversation from './hooks/useCreateConversation';
 
 const Label = tw.label`flex flex-col`;
 
 const Input = tw.input`px-4 py-2 mt-1 border rounded-full`;
 
 const CREATE_USER = gql`
-  mutation($name: String!, $conversationName: String!) {
-    userId: createUser(name: $name, conversationName: $conversationName)
+  mutation CreateUser($name: String!) {
+    userId: createUser(name: $name)
   }
 `;
 
@@ -42,19 +44,29 @@ export default function Login({
     }));
   };
 
+  const createConversation = useCreateConversation();
+
+  const addUserToConversation = useAddUserToConversation();
+
   const [createUser] = useMutation<{ userId: User['id'] }>(CREATE_USER, {
-    onCompleted: ({ userId }) => handleUser(userId),
+    onCompleted: async ({ userId }) => {
+      const { data } = await createConversation(conversationName);
+      if (data) {
+        const { conversationId } = data;
+        await addUserToConversation(conversationId, userId);
+        handleUser(userId);
+      }
+    },
   });
 
   return (
     <Container>
       <form
         tw="flex flex-col items-center"
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
           createUser({
             variables: {
-              conversationName,
               name: displayName,
             },
           });

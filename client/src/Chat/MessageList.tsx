@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import 'twin.macro';
-import { Message } from '../common/types';
+import type { Message } from '../common/types';
 import MessageItem from './MessageItem';
 
 type MessageListProps = {
   messages: Message[];
-  subscribeToNewMessages: () => () => void;
+  subscribeToNewMessages: (() => () => void) | null;
 };
 
 export default function MessageList({
@@ -13,6 +13,9 @@ export default function MessageList({
   subscribeToNewMessages,
 }: MessageListProps) {
   useEffect(() => {
+    if (!subscribeToNewMessages) {
+      return undefined;
+    }
     const unsubscribe = subscribeToNewMessages();
     return () => unsubscribe();
   }, [subscribeToNewMessages]);

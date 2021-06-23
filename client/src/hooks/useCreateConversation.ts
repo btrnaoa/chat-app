@@ -1,9 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
-import { Conversation, User } from '../common/types';
+import type { Conversation } from '../common/types';
 
 const CREATE_CONVERSATION = gql`
-  mutation($userIds: [ID!]!) {
-    conversationId: createConversation(userIds: $userIds)
+  mutation CreateConversation($name: String) {
+    conversationId: createConversation(name: $name)
   }
 `;
 
@@ -11,6 +11,6 @@ export default function useCreateConversation() {
   const [createConversation] = useMutation<{
     conversationId: Conversation['id'];
   }>(CREATE_CONVERSATION);
-  return (userIds: Array<User['id']>) =>
-    createConversation({ variables: { userIds } });
+  return (name?: Conversation['name']) =>
+    createConversation({ variables: { name: name || undefined } });
 }

@@ -1,19 +1,17 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { useCallback, useState } from 'react';
 import 'twin.macro';
-import { Conversation, Message, User } from '../common/types';
-import Container from '../components/Container';
+import type { Conversation, Message, User } from '../common/types';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import useCreateConversation from '../hooks/useCreateConversation';
 import ConversationList from './ConversationList';
 import MessageInput from './MessageInput';
 import MessageList from './MessageList';
 import UserList from './UserList';
 
 const GET_CONVERSATION = gql`
-  query($userId: ID!, $conversationId: ID) {
-    conversation(userId: $userId, conversationId: $conversationId) {
+  query GetConversation($id: ID!) {
+    conversation(id: $id) {
       id
       name
       users {
@@ -33,7 +31,7 @@ const GET_CONVERSATION = gql`
 `;
 
 const MESSAGE_SUBSCRIPTION = gql`
-  subscription($conversationId: ID!) {
+  subscription MessageSubscription($conversationId: ID!) {
     newMessage(conversationId: $conversationId) {
       id
       content
@@ -45,12 +43,22 @@ const MESSAGE_SUBSCRIPTION = gql`
   }
 `;
 
-export default function Chat({ currentUserId }: { currentUserId: User['id'] }) {
+const FIND_CONVERSATION_BY_USER = gql`
+  query FindConversationByUser($id: ID!) {
+    conversation: findConversationByUser(id: $id) {
+      id
+    }
+  }
+`;
+
+type ChatProps = {
+  currentUserId: User['id'];
+};
+
+export default function Chat({ currentUserId }: ChatProps) {
   const [conversationId, setConversationId] = useState<
     Conversation['id'] | null
   >(null);
-
-  const createConversation = useCreateConversation();
 
   const {
     data: {
@@ -65,8 +73,8 @@ export default function Chat({ currentUserId }: { currentUserId: User['id'] }) {
     conversation: Conversation;
     newMessage: Message;
   }>(GET_CONVERSATION, {
-    variables: { conversationId, userId: currentUserId },
-    onCompleted: ({ conversation }) => setConversationId(conversation.id),
+    variables: { id: conversationId },
+    skip: !conversationId,
   });
 
   const subscribeToNewMessages = useCallback(
@@ -91,46 +99,50 @@ export default function Chat({ currentUserId }: { currentUserId: User['id'] }) {
     [conversationId, subscribeToMore],
   );
 
+  const [findConversationByUser] = useLazyQuery<{
+    conversation: Conversation | null;
+  }>(FIND_CONVERSATION_BY_USER, {
+    onCompleted: async ({ conversation }) => {
+      setConversationId(conversation ? conversation.id : null);
+    },
+  });
+
   return (
-    <Container>
-      <div tw="flex w-full h-full">
-        <Sidebar>
-          <ConversationList
-            currentUserId={currentUserId}
-            handleClick={(id) => setConversationId(id)}
+    <div tw="flex min-h-screen">
+      <Sidebar>
+        <ConversationList
+          currentUserId={currentUserId}
+          handleClick={(id) => setConversationId(id)}
+        />
+        <UserList
+          handleClick={(id) => {
+            if (id === currentUserId) {
+              return;
+            }
+            findConversationByUser({ variables: { id } });
+          }}
+        />
+      </Sidebar>
+      <div tw="flex flex-col flex-1">
+        <Header>
+          <h1 tw="text-lg">
+            {conversationName ||
+              conversationUsers
+                .filter((user) => user.id !== currentUserId)
+                .map((user) => user.name)
+                .join(', ')}
+          </h1>
+        </Header>
+        <div tw="flex flex-col flex-1 px-4 pb-4 overflow-hidden">
+          <MessageList
+            messages={messages}
+            subscribeToNewMessages={
+              conversationId ? subscribeToNewMessages : null
+            }
           />
-          <UserList
-            handleClick={async (id) => {
-              if (id === currentUserId) return;
-              const { data } = await createConversation([id, currentUserId]);
-              if (data) {
-                setConversationId(data.conversationId);
-              }
-            }}
-          />
-        </Sidebar>
-        <div tw="flex flex-col flex-1">
-          <Header>
-            <h1 tw="text-lg">
-              {conversationName ||
-                conversationUsers
-                  .filter((user) => user.id !== currentUserId)
-                  .map((user) => user.name)
-                  .join(', ')}
-            </h1>
-          </Header>
-          <div tw="flex flex-col flex-1 px-4 pb-4 overflow-hidden">
-            <MessageList
-              messages={messages}
-              subscribeToNewMessages={subscribeToNewMessages}
-            />
-            <MessageInput
-              conversationId={conversationId}
-              userId={currentUserId}
-            />
-          </div>
+          <MessageInput conversationId={conversationId} />
         </div>
       </div>
-    </Container>
+    </div>
   );
 }

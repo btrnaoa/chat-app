@@ -1,24 +1,29 @@
-import { ApolloServer, PubSub } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
 import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import { resolve } from 'path';
-import { createConnection, getConnectionOptions, getRepository } from 'typeorm';
+import { buildSchema } from 'type-graphql';
+import Container from 'typedi';
+import {
+  createConnection,
+  getConnectionOptions,
+  getRepository,
+  useContainer,
+} from 'typeorm';
 import config from './config';
-import User from './entities/User';
-import typeDefs from './graphql/typeDefs';
-import resolvers from './graphql/resolvers';
-
-const pubsub = new PubSub();
+import ConversationResolver from './graphql/resolvers/ConversationResolver';
+import MessageResolver from './graphql/resolvers/MessageResolver';
+import UserConversationResolver from './graphql/resolvers/UserConversationResolver';
+import UserResolver from './graphql/resolvers/UserResolver';
+import User from './models/User';
 
 const subscriptions = {
   path: '/subscriptions',
   onConnect: (connectionParams: any) => {
-    const { userId } = connectionParams;
+    const userId = connectionParams['user-id'];
     if (userId) {
       getRepository(User).update(userId, { isOnline: true });
-      return {
-        userId,
-      };
+      return { userId };
     }
     return connectionParams;
   },
@@ -29,6 +34,9 @@ const subscriptions = {
     }
   },
 };
+
+// Register 3rd party IoC container
+useContainer(Container);
 
 getConnectionOptions()
   .then((options) => {
@@ -42,13 +50,29 @@ getConnectionOptions()
   })
   .then((options) =>
     createConnection(options)
-      .then(() => {
+      .then(async () => {
         const app = express();
+        const schema = await buildSchema({
+          resolvers: [
+            ConversationResolver,
+            MessageResolver,
+            UserConversationResolver,
+            UserResolver,
+          ],
+          container: Container,
+          emitSchemaFile: true,
+        });
         const server = new ApolloServer({
-          typeDefs,
-          resolvers,
+          schema,
           subscriptions,
-          context: { pubsub },
+          context: ({ req, connection }) => {
+            if (connection) {
+              const userId = connection.context['user-id'] || '';
+              return { userId };
+            }
+            const userId = req.headers['user-id'] || '';
+            return { userId };
+          },
         });
 
         if (process.env.NODE_ENV === 'production') {

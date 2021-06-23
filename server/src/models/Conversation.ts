@@ -1,3 +1,4 @@
+import { Field, ID, ObjectType } from 'type-graphql';
 import {
   Column,
   Entity,
@@ -11,25 +12,28 @@ import User from './User';
 import UserConversation from './UserConversation';
 
 @Entity()
+@ObjectType()
 export default class Conversation {
+  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('varchar', { length: 21, nullable: true })
+  @Field({ nullable: true })
+  @Column('varchar', { length: 21, nullable: true, unique: true })
   name?: string;
 
-  @Column('bool', { default: false })
-  isPrivate: boolean;
-
+  @Field(() => [Message])
   @OneToMany(() => Message, (message) => message.conversation)
   messages: Message[];
 
+  @Field(() => [UserConversation])
   @OneToMany(
     () => UserConversation,
     (userConversation) => userConversation.conversation,
   )
   userConversations: UserConversation[];
 
+  @Field(() => [User])
   @ManyToMany(() => User, (user) => user.conversations)
   @JoinTable({
     name: 'user_conversation',

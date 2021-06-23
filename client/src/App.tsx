@@ -1,21 +1,17 @@
 import {
   ApolloClient,
   ApolloProvider,
-  DocumentNode,
   HttpLink,
   InMemoryCache,
+  Operation,
   split,
 } from '@apollo/client';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { useState } from 'react';
-import { User } from './common/types';
+import type { User } from './common/types';
 import Chat from './Chat';
 import Login from './Login';
-
-const httpLink = new HttpLink({
-  uri: `${window.location.origin}/graphql`,
-});
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -32,20 +28,27 @@ const cache = new InMemoryCache({
 export default function App() {
   const [currentUserId, setCurrentUserId] = useState<User['id'] | null>(null);
 
+  const context = {
+    'user-id': currentUserId || '',
+  };
+
+  const httpLink = new HttpLink({
+    uri: `${window.location.origin}/graphql`,
+    headers: context,
+  });
+
   const wsLink = new WebSocketLink({
     uri: `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
       window.location.host
     }/subscriptions`,
     options: {
       reconnect: true,
-      connectionParams: {
-        userId: currentUserId,
-      },
+      connectionParams: context,
     },
   });
 
   const splitLink = split(
-    (operation: { query: DocumentNode }) => {
+    (operation: Operation) => {
       const def = getMainDefinition(operation.query);
       return (
         def.kind === 'OperationDefinition' && def.operation === 'subscription'

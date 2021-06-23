@@ -1,18 +1,14 @@
 import { PaperAirplaneIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import 'twin.macro';
-import { Conversation, User } from '../common/types';
+import type { Conversation } from '../common/types';
 import useCreateMessage from '../hooks/useCreateMessage';
 
 type MessageInputProps = {
   conversationId: Conversation['id'] | null;
-  userId: User['id'];
 };
 
-export default function MessageInput({
-  conversationId,
-  userId,
-}: MessageInputProps) {
+export default function MessageInput({ conversationId }: MessageInputProps) {
   const [messageContent, setMessageContent] = useState('');
   const createMessage = useCreateMessage();
   return (
@@ -22,7 +18,7 @@ export default function MessageInput({
       onSubmit={(event) => {
         event.preventDefault();
         if (conversationId) {
-          createMessage(messageContent, conversationId, userId);
+          createMessage(conversationId, messageContent);
         }
         setMessageContent('');
       }}

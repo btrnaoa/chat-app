@@ -1,5 +1,5 @@
 import 'twin.macro';
-import { Message } from '../common/types';
+import type { Message } from '../common/types';
 
 export default function MessageItem({
   content,
@@ -11,7 +11,7 @@ export default function MessageItem({
       <div>
         <span tw="font-semibold">{user.name}</span>
         <span tw="ml-4 text-xs text-gray-500">
-          {new Date(Number(createdAt)).toLocaleTimeString('en-US', {
+          {new Date(createdAt).toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: 'numeric',
           })}
