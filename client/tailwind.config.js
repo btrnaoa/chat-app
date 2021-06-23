@@ -9,7 +9,11 @@ module.exports = {
       indigo: colors.indigo,
       white: colors.white,
     },
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+    },
   },
   variants: {
     extend: {
