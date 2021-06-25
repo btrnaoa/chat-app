@@ -23,7 +23,7 @@ export default class ConversationResolver {
     return this.manager
       .createQueryBuilder(Conversation, 'conversation')
       .leftJoinAndSelect('conversation.messages', 'message')
-      .leftJoinAndSelect('conversation.users', 'user', 'user.id = :id', {
+      .innerJoinAndSelect('conversation.users', 'user', 'user.id = :id', {
         id: ctx.userId,
       })
       .getMany();
