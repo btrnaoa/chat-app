@@ -1,21 +1,17 @@
-import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
 import tw from 'twin.macro';
-import type { User } from './common/types';
 import Button from './components/Button';
 import Container from './components/Container';
-import useAddUserToConversation from './hooks/useAddUserToConversation';
-import useCreateConversation from './hooks/useCreateConversation';
+import {
+  useAddUserToConversationMutation,
+  useCreateConversationMutation,
+  useCreateUserMutation,
+} from './graphql/hooks.generated';
+import type { User } from './graphql/types.generated';
 
 const Label = tw.label`flex flex-col`;
 
 const Input = tw.input`px-4 py-2 mt-1 border rounded-full`;
-
-const CREATE_USER = gql`
-  mutation CreateUser($name: String!) {
-    userId: createUser(name: $name)
-  }
-`;
 
 type InputStateProps = {
   conversationName: string;
@@ -27,11 +23,11 @@ const initialInputState: InputStateProps = {
   displayName: '',
 };
 
-export default function Login({
-  handleUser,
-}: {
+type LoginProps = {
   handleUser: (userId: User['id']) => void;
-}) {
+};
+
+export default function Login({ handleUser }: LoginProps) {
   const [{ conversationName, displayName }, setInputState] = useState(
     initialInputState,
   );
@@ -44,16 +40,16 @@ export default function Login({
     }));
   };
 
-  const createConversation = useCreateConversation();
-
-  const addUserToConversation = useAddUserToConversation();
-
-  const [createUser] = useMutation<{ userId: User['id'] }>(CREATE_USER, {
+  const [createConversation] = useCreateConversationMutation();
+  const [addUserToConversation] = useAddUserToConversationMutation();
+  const [createUser] = useCreateUserMutation({
     onCompleted: async ({ userId }) => {
-      const { data } = await createConversation(conversationName);
+      const { data } = await createConversation({
+        variables: { name: conversationName || undefined },
+      });
       if (data) {
         const { conversationId } = data;
-        await addUserToConversation(conversationId, userId);
+        await addUserToConversation({ variables: { conversationId, userId } });
         handleUser(userId);
       }
     },

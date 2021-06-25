@@ -1,21 +1,8 @@
-import { gql, useQuery } from '@apollo/client';
 import 'twin.macro';
-import type { Conversation, User } from '../common/types';
 import List from '../components/Sidebar/List';
 import ListItem from '../components/Sidebar/ListItem';
-
-const GET_CONVERSATIONS = gql`
-  query GetConversations {
-    conversations {
-      id
-      name
-      users {
-        id
-        name
-      }
-    }
-  }
-`;
+import { useGetConversationsQuery } from '../graphql/hooks.generated';
+import type { Conversation, User } from '../graphql/types.generated';
 
 type ConversationListProps = {
   currentUserId: User['id'];
@@ -26,9 +13,9 @@ export default function ConversationList({
   currentUserId,
   handleClick,
 }: ConversationListProps) {
-  const { data: { conversations = [] } = {} } = useQuery<{
-    conversations: Conversation[];
-  }>(GET_CONVERSATIONS, { pollInterval: 500 });
+  const { data: { conversations = [] } = {} } = useGetConversationsQuery({
+    pollInterval: 500,
+  });
 
   const conversationsSortedByName = [...conversations].sort(
     (a, b) => Number(!a.name) - Number(!b.name),

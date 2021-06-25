@@ -9,9 +9,9 @@ import {
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { useState } from 'react';
-import type { User } from './common/types';
 import Chat from './Chat';
 import Login from './Login';
+import type { User } from './graphql/types.generated';
 
 const cache = new InMemoryCache({
   typePolicies: {

@@ -60,17 +60,14 @@ getConnectionOptions()
             UserResolver,
           ],
           container: Container,
-          emitSchemaFile: true,
+          emitSchemaFile: resolve(__dirname, 'schema.gql'),
         });
         const server = new ApolloServer({
           schema,
           subscriptions,
           context: ({ req, connection }) => {
-            if (connection) {
-              const userId = connection.context['user-id'] || '';
-              return { userId };
-            }
-            const userId = req.headers['user-id'] || '';
+            const context = connection ? connection.context : req.headers;
+            const userId = context['user-id'] || '';
             return { userId };
           },
         });

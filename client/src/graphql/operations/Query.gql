@@ -1,0 +1,42 @@
+query FindConversationByUser($id: ID!) {
+  conversation: findConversationByUser(id: $id) {
+    id
+  }
+}
+
+query GetConversation($id: ID!) {
+  conversation(id: $id) {
+    id
+    name
+    users {
+      id
+      name
+    }
+    messages {
+      id
+      content
+      createdAt
+      user {
+        name
+      }
+    }
+  }
+}
+
+query GetConversations {
+  conversations {
+    id
+    name
+    users {
+      id
+      name
+    }
+  }
+}
+
+query GetUsersOnline {
+  usersOnline {
+    id
+    name
+  }
+}

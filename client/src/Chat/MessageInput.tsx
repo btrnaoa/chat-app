@@ -1,8 +1,8 @@
 import { PaperAirplaneIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import 'twin.macro';
-import type { Conversation } from '../common/types';
-import useCreateMessage from '../hooks/useCreateMessage';
+import { useCreateMessageMutation } from '../graphql/hooks.generated';
+import type { Conversation } from '../graphql/types.generated';
 
 type MessageInputProps = {
   conversationId: Conversation['id'] | null;
@@ -10,7 +10,7 @@ type MessageInputProps = {
 
 export default function MessageInput({ conversationId }: MessageInputProps) {
   const [messageContent, setMessageContent] = useState('');
-  const createMessage = useCreateMessage();
+  const [createMessage] = useCreateMessageMutation();
   return (
     <form
       tw="flex"
@@ -18,7 +18,9 @@ export default function MessageInput({ conversationId }: MessageInputProps) {
       onSubmit={(event) => {
         event.preventDefault();
         if (conversationId) {
-          createMessage(conversationId, messageContent);
+          createMessage({
+            variables: { conversationId, content: messageContent },
+          });
         }
         setMessageContent('');
       }}

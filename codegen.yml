@@ -1,0 +1,17 @@
+schema: 'server/src/schema.gql'
+documents: 'client/src/graphql/operations/*.gql'
+generates:
+  client/src/graphql/types.generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+  client/src/graphql/hooks.generated.tsx:
+    preset: import-types
+    presetConfig:
+      typesPath: ./types.generated
+    plugins:
+      - typescript-react-apollo
+hooks:
+  afterAllFileWrite:
+    - eslint --fix
+    - prettier --write

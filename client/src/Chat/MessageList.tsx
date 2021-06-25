@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import 'twin.macro';
-import type { Message } from '../common/types';
 import MessageItem from './MessageItem';
+import type { GetConversationQuery } from '../graphql/types.generated';
 
 type MessageListProps = {
-  messages: Message[];
+  messages: NonNullable<GetConversationQuery['conversation']>['messages'];
   subscribeToNewMessages: (() => () => void) | null;
 };
 
@@ -27,7 +27,7 @@ export default function MessageList({
             key={id}
             content={content}
             createdAt={createdAt}
-            user={user}
+            username={user.name}
           />
         ))}
       </ul>

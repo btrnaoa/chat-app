@@ -1,0 +1,10 @@
+subscription OnNewMessage($conversationId: ID!) {
+  newMessage(conversationId: $conversationId) {
+    id
+    content
+    createdAt
+    user {
+      name
+    }
+  }
+}

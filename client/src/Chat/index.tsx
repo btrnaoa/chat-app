@@ -1,55 +1,22 @@
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { useCallback, useState } from 'react';
 import 'twin.macro';
-import type { Conversation, Message, User } from '../common/types';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import {
+  OnNewMessageDocument,
+  useFindConversationByUserLazyQuery,
+  useGetConversationQuery,
+} from '../graphql/hooks.generated';
 import ConversationList from './ConversationList';
 import MessageInput from './MessageInput';
 import MessageList from './MessageList';
 import UserList from './UserList';
-
-const GET_CONVERSATION = gql`
-  query GetConversation($id: ID!) {
-    conversation(id: $id) {
-      id
-      name
-      users {
-        id
-        name
-      }
-      messages {
-        id
-        content
-        createdAt
-        user {
-          name
-        }
-      }
-    }
-  }
-`;
-
-const MESSAGE_SUBSCRIPTION = gql`
-  subscription MessageSubscription($conversationId: ID!) {
-    newMessage(conversationId: $conversationId) {
-      id
-      content
-      createdAt
-      user {
-        name
-      }
-    }
-  }
-`;
-
-const FIND_CONVERSATION_BY_USER = gql`
-  query FindConversationByUser($id: ID!) {
-    conversation: findConversationByUser(id: $id) {
-      id
-    }
-  }
-`;
+import type {
+  Conversation,
+  OnNewMessageSubscription,
+  OnNewMessageSubscriptionVariables,
+  User,
+} from '../graphql/types.generated';
 
 type ChatProps = {
   currentUserId: User['id'];
@@ -61,29 +28,25 @@ export default function Chat({ currentUserId }: ChatProps) {
   >(null);
 
   const {
-    data: {
-      conversation: {
-        name: conversationName = null,
-        users: conversationUsers = [],
-        messages = [],
-      } = {},
-    } = {},
+    data: { conversation } = {},
     subscribeToMore,
-  } = useQuery<{
-    conversation: Conversation;
-    newMessage: Message;
-  }>(GET_CONVERSATION, {
-    variables: { id: conversationId },
+  } = useGetConversationQuery({
+    variables: { id: conversationId! },
     skip: !conversationId,
   });
 
   const subscribeToNewMessages = useCallback(
     () =>
-      subscribeToMore({
-        document: MESSAGE_SUBSCRIPTION,
-        variables: { conversationId },
+      subscribeToMore<
+        OnNewMessageSubscription,
+        OnNewMessageSubscriptionVariables
+      >({
+        document: OnNewMessageDocument,
+        variables: { conversationId: conversationId! },
         updateQuery: (prev, { subscriptionData }) => {
-          if (!subscriptionData.data) return prev;
+          if (!subscriptionData.data || !prev.conversation) {
+            return prev;
+          }
           return {
             ...prev,
             conversation: {
@@ -99,11 +62,9 @@ export default function Chat({ currentUserId }: ChatProps) {
     [conversationId, subscribeToMore],
   );
 
-  const [findConversationByUser] = useLazyQuery<{
-    conversation: Conversation | null;
-  }>(FIND_CONVERSATION_BY_USER, {
-    onCompleted: async ({ conversation }) => {
-      setConversationId(conversation ? conversation.id : null);
+  const [findConversationByUser] = useFindConversationByUserLazyQuery({
+    onCompleted: async ({ conversation: result }) => {
+      setConversationId(result ? result.id : null);
     },
   });
 
@@ -126,16 +87,17 @@ export default function Chat({ currentUserId }: ChatProps) {
       <div tw="flex flex-col flex-1">
         <Header>
           <h1 tw="text-lg">
-            {conversationName ||
-              conversationUsers
-                .filter((user) => user.id !== currentUserId)
-                .map((user) => user.name)
-                .join(', ')}
+            {conversation &&
+              (conversation.name ||
+                conversation.users
+                  .filter((user) => user.id !== currentUserId)
+                  .map((user) => user.name)
+                  .join(', '))}
           </h1>
         </Header>
         <div tw="flex flex-col flex-1 px-4 pb-4 overflow-hidden">
           <MessageList
-            messages={messages}
+            messages={conversation ? conversation.messages : []}
             subscribeToNewMessages={
               conversationId ? subscribeToNewMessages : null
             }
