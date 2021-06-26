@@ -7,7 +7,7 @@ import {
   useCreateConversationMutation,
   useCreateUserMutation,
 } from './graphql/hooks.generated';
-import type { User } from './graphql/types.generated';
+import type { Conversation, User } from './graphql/types.generated';
 
 const Label = tw.label`flex flex-col`;
 
@@ -24,7 +24,7 @@ const initialInputState: InputStateProps = {
 };
 
 type LoginProps = {
-  handleUser: (userId: User['id']) => void;
+  handleUser: (userId: User['id'], conversationId: Conversation['id']) => void;
 };
 
 export default function Login({ handleUser }: LoginProps) {
@@ -50,7 +50,7 @@ export default function Login({ handleUser }: LoginProps) {
       if (data) {
         const { conversationId } = data;
         await addUserToConversation({ variables: { conversationId, userId } });
-        handleUser(userId);
+        handleUser(userId, conversationId);
       }
     },
   });

@@ -11,7 +11,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { useState } from 'react';
 import Chat from './Chat';
 import Login from './Login';
-import type { User } from './graphql/types.generated';
+import type { Conversation, User } from './graphql/types.generated';
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -27,6 +27,9 @@ const cache = new InMemoryCache({
 
 export default function App() {
   const [currentUserId, setCurrentUserId] = useState<User['id'] | null>(null);
+  const [initialConversationId, setInitialConversationId] = useState<
+    Conversation['id'] | null
+  >(null);
 
   const context = {
     'user-id': currentUserId || '',
@@ -65,10 +68,18 @@ export default function App() {
 
   return (
     <ApolloProvider client={client}>
-      {currentUserId ? (
-        <Chat currentUserId={currentUserId} />
+      {currentUserId && initialConversationId ? (
+        <Chat
+          currentUserId={currentUserId}
+          initialConversationId={initialConversationId}
+        />
       ) : (
-        <Login handleUser={setCurrentUserId} />
+        <Login
+          handleUser={(userId, conversationId) => {
+            setCurrentUserId(userId);
+            setInitialConversationId(conversationId);
+          }}
+        />
       )}
     </ApolloProvider>
   );

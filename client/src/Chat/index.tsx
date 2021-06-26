@@ -20,12 +20,16 @@ import type {
 
 type ChatProps = {
   currentUserId: User['id'];
+  initialConversationId: Conversation['id'];
 };
 
-export default function Chat({ currentUserId }: ChatProps) {
+export default function Chat({
+  currentUserId,
+  initialConversationId,
+}: ChatProps) {
   const [conversationId, setConversationId] = useState<
     Conversation['id'] | null
-  >(null);
+  >(initialConversationId);
 
   const {
     data: { conversation } = {},
