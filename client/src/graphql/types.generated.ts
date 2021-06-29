@@ -37,19 +37,8 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addUserToConversation: Scalars['ID'];
-  createConversation: Scalars['ID'];
   createMessage: Scalars['ID'];
-  createUser: Scalars['ID'];
-};
-
-export type MutationAddUserToConversationArgs = {
-  conversationId: Scalars['ID'];
-  userId: Scalars['ID'];
-};
-
-export type MutationCreateConversationArgs = {
-  name?: Maybe<Scalars['String']>;
+  loginUser: UserConversation;
 };
 
 export type MutationCreateMessageArgs = {
@@ -57,8 +46,9 @@ export type MutationCreateMessageArgs = {
   conversationId: Scalars['ID'];
 };
 
-export type MutationCreateUserArgs = {
-  name: Scalars['String'];
+export type MutationLoginUserArgs = {
+  conversationName?: Maybe<Scalars['String']>;
+  username: Scalars['String'];
 };
 
 export type Query = {
@@ -101,23 +91,6 @@ export type UserConversation = {
   user: User;
 };
 
-export type AddUserToConversationMutationVariables = Exact<{
-  conversationId: Scalars['ID'];
-  userId: Scalars['ID'];
-}>;
-
-export type AddUserToConversationMutation = { __typename?: 'Mutation' } & {
-  conversationId: Mutation['addUserToConversation'];
-};
-
-export type CreateConversationMutationVariables = Exact<{
-  name?: Maybe<Scalars['String']>;
-}>;
-
-export type CreateConversationMutation = { __typename?: 'Mutation' } & {
-  conversationId: Mutation['createConversation'];
-};
-
 export type CreateMessageMutationVariables = Exact<{
   content: Scalars['String'];
   conversationId: Scalars['ID'];
@@ -127,12 +100,16 @@ export type CreateMessageMutation = { __typename?: 'Mutation' } & {
   messageId: Mutation['createMessage'];
 };
 
-export type CreateUserMutationVariables = Exact<{
-  name: Scalars['String'];
+export type LoginUserMutationVariables = Exact<{
+  conversationName?: Maybe<Scalars['String']>;
+  username: Scalars['String'];
 }>;
 
-export type CreateUserMutation = { __typename?: 'Mutation' } & {
-  userId: Mutation['createUser'];
+export type LoginUserMutation = { __typename?: 'Mutation' } & {
+  userConversation: { __typename?: 'UserConversation' } & {
+    conversation: { __typename?: 'Conversation' } & Pick<Conversation, 'id'>;
+    user: { __typename?: 'User' } & Pick<User, 'id'>;
+  };
 };
 
 export type FindConversationByUserQueryVariables = Exact<{

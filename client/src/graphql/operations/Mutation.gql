@@ -1,18 +1,17 @@
-mutation AddUserToConversation($conversationId: ID!, $userId: ID!) {
-  conversationId: addUserToConversation(
-    conversationId: $conversationId
-    userId: $userId
-  )
-}
-
-mutation CreateConversation($name: String) {
-  conversationId: createConversation(name: $name)
-}
-
 mutation CreateMessage($content: String!, $conversationId: ID!) {
   messageId: createMessage(content: $content, conversationId: $conversationId)
 }
 
-mutation CreateUser($name: String!) {
-  userId: createUser(name: $name)
+mutation LoginUser($conversationName: String, $username: String!) {
+  userConversation: loginUser(
+    conversationName: $conversationName
+    username: $username
+  ) {
+    conversation {
+      id
+    }
+    user {
+      id
+    }
+  }
 }

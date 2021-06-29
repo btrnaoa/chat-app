@@ -2,11 +2,7 @@ import { useState } from 'react';
 import tw from 'twin.macro';
 import Button from './components/Button';
 import Container from './components/Container';
-import {
-  useAddUserToConversationMutation,
-  useCreateConversationMutation,
-  useCreateUserMutation,
-} from './graphql/hooks.generated';
+import { useLoginUserMutation } from './graphql/hooks.generated';
 import type { Conversation, User } from './graphql/types.generated';
 
 const Label = tw.label`flex flex-col`;
@@ -40,17 +36,10 @@ export default function Login({ handleUser }: LoginProps) {
     }));
   };
 
-  const [createConversation] = useCreateConversationMutation();
-  const [addUserToConversation] = useAddUserToConversationMutation();
-  const [createUser] = useCreateUserMutation({
-    onCompleted: async ({ userId }) => {
-      const { data } = await createConversation({
-        variables: { name: conversationName || undefined },
-      });
-      if (data) {
-        const { conversationId } = data;
-        await addUserToConversation({ variables: { conversationId, userId } });
-        handleUser(userId, conversationId);
+  const [loginUser] = useLoginUserMutation({
+    onCompleted: ({ userConversation }) => {
+      if (userConversation) {
+        handleUser(userConversation.user.id, userConversation.conversation.id);
       }
     },
   });
@@ -59,11 +48,12 @@ export default function Login({ handleUser }: LoginProps) {
     <Container>
       <form
         tw="flex flex-col items-center"
-        onSubmit={async (event) => {
+        onSubmit={(event) => {
           event.preventDefault();
-          createUser({
+          loginUser({
             variables: {
-              name: displayName,
+              username: displayName,
+              conversationName: conversationName || undefined,
             },
           });
         }}

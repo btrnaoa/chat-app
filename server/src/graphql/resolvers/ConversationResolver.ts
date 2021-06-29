@@ -1,8 +1,7 @@
-import { Arg, Ctx, ID, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, ID, Query, Resolver } from 'type-graphql';
 import { Service } from 'typedi';
 import { EntityManager } from 'typeorm';
 import { InjectManager } from 'typeorm-typedi-extensions';
-import config from '../../config';
 import Conversation from '../../models/Conversation';
 import type { Context } from '../context';
 
@@ -23,7 +22,8 @@ export default class ConversationResolver {
     return this.manager
       .createQueryBuilder(Conversation, 'conversation')
       .leftJoinAndSelect('conversation.messages', 'message')
-      .innerJoinAndSelect('conversation.users', 'user', 'user.id = :id', {
+      .leftJoinAndSelect('conversation.users', 'user')
+      .innerJoin('conversation.users', 'u', 'u.id = :id', {
         id: ctx.userId,
       })
       .getMany();
@@ -48,24 +48,5 @@ export default class ConversationResolver {
         { ids },
       )
       .getOne();
-  }
-
-  @Mutation(() => ID)
-  async createConversation(
-    @Arg('name', {
-      nullable: true,
-      defaultValue: config.defaultConversationName,
-    })
-    name: string,
-  ) {
-    let conversation = await this.manager.findOne(Conversation, {
-      where: { name },
-    });
-    if (!conversation) {
-      conversation = await this.manager.save(
-        this.manager.create(Conversation, { name }),
-      );
-    }
-    return conversation.id;
   }
 }

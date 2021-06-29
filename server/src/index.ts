@@ -13,7 +13,6 @@ import {
 import config from './config';
 import ConversationResolver from './graphql/resolvers/ConversationResolver';
 import MessageResolver from './graphql/resolvers/MessageResolver';
-import UserConversationResolver from './graphql/resolvers/UserConversationResolver';
 import UserResolver from './graphql/resolvers/UserResolver';
 import User from './models/User';
 
@@ -53,12 +52,7 @@ getConnectionOptions()
       .then(async () => {
         const app = express();
         const schema = await buildSchema({
-          resolvers: [
-            ConversationResolver,
-            MessageResolver,
-            UserConversationResolver,
-            UserResolver,
-          ],
+          resolvers: [ConversationResolver, MessageResolver, UserResolver],
           container: Container,
           emitSchemaFile: resolve(__dirname, 'schema.gql'),
         });

@@ -4,104 +4,6 @@ import * as Types from './types.generated';
 
 const defaultOptions = {};
 
-export const AddUserToConversationDocument = gql`
-  mutation AddUserToConversation($conversationId: ID!, $userId: ID!) {
-    conversationId: addUserToConversation(
-      conversationId: $conversationId
-      userId: $userId
-    )
-  }
-`;
-export type AddUserToConversationMutationFn = Apollo.MutationFunction<
-  Types.AddUserToConversationMutation,
-  Types.AddUserToConversationMutationVariables
->;
-
-/**
- * __useAddUserToConversationMutation__
- *
- * To run a mutation, you first call `useAddUserToConversationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddUserToConversationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addUserToConversationMutation, { data, loading, error }] = useAddUserToConversationMutation({
- *   variables: {
- *      conversationId: // value for 'conversationId'
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useAddUserToConversationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    Types.AddUserToConversationMutation,
-    Types.AddUserToConversationMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    Types.AddUserToConversationMutation,
-    Types.AddUserToConversationMutationVariables
-  >(AddUserToConversationDocument, options);
-}
-export type AddUserToConversationMutationHookResult = ReturnType<
-  typeof useAddUserToConversationMutation
->;
-export type AddUserToConversationMutationResult = Apollo.MutationResult<Types.AddUserToConversationMutation>;
-export type AddUserToConversationMutationOptions = Apollo.BaseMutationOptions<
-  Types.AddUserToConversationMutation,
-  Types.AddUserToConversationMutationVariables
->;
-export const CreateConversationDocument = gql`
-  mutation CreateConversation($name: String) {
-    conversationId: createConversation(name: $name)
-  }
-`;
-export type CreateConversationMutationFn = Apollo.MutationFunction<
-  Types.CreateConversationMutation,
-  Types.CreateConversationMutationVariables
->;
-
-/**
- * __useCreateConversationMutation__
- *
- * To run a mutation, you first call `useCreateConversationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateConversationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createConversationMutation, { data, loading, error }] = useCreateConversationMutation({
- *   variables: {
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useCreateConversationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    Types.CreateConversationMutation,
-    Types.CreateConversationMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    Types.CreateConversationMutation,
-    Types.CreateConversationMutationVariables
-  >(CreateConversationDocument, options);
-}
-export type CreateConversationMutationHookResult = ReturnType<
-  typeof useCreateConversationMutation
->;
-export type CreateConversationMutationResult = Apollo.MutationResult<Types.CreateConversationMutation>;
-export type CreateConversationMutationOptions = Apollo.BaseMutationOptions<
-  Types.CreateConversationMutation,
-  Types.CreateConversationMutationVariables
->;
 export const CreateMessageDocument = gql`
   mutation CreateMessage($content: String!, $conversationId: ID!) {
     messageId: createMessage(content: $content, conversationId: $conversationId)
@@ -150,52 +52,63 @@ export type CreateMessageMutationOptions = Apollo.BaseMutationOptions<
   Types.CreateMessageMutation,
   Types.CreateMessageMutationVariables
 >;
-export const CreateUserDocument = gql`
-  mutation CreateUser($name: String!) {
-    userId: createUser(name: $name)
+export const LoginUserDocument = gql`
+  mutation LoginUser($conversationName: String, $username: String!) {
+    userConversation: loginUser(
+      conversationName: $conversationName
+      username: $username
+    ) {
+      conversation {
+        id
+      }
+      user {
+        id
+      }
+    }
   }
 `;
-export type CreateUserMutationFn = Apollo.MutationFunction<
-  Types.CreateUserMutation,
-  Types.CreateUserMutationVariables
+export type LoginUserMutationFn = Apollo.MutationFunction<
+  Types.LoginUserMutation,
+  Types.LoginUserMutationVariables
 >;
 
 /**
- * __useCreateUserMutation__
+ * __useLoginUserMutation__
  *
- * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useLoginUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginUserMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
+ * const [loginUserMutation, { data, loading, error }] = useLoginUserMutation({
  *   variables: {
- *      name: // value for 'name'
+ *      conversationName: // value for 'conversationName'
+ *      username: // value for 'username'
  *   },
  * });
  */
-export function useCreateUserMutation(
+export function useLoginUserMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    Types.CreateUserMutation,
-    Types.CreateUserMutationVariables
+    Types.LoginUserMutation,
+    Types.LoginUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useMutation<
-    Types.CreateUserMutation,
-    Types.CreateUserMutationVariables
-  >(CreateUserDocument, options);
+    Types.LoginUserMutation,
+    Types.LoginUserMutationVariables
+  >(LoginUserDocument, options);
 }
-export type CreateUserMutationHookResult = ReturnType<
-  typeof useCreateUserMutation
+export type LoginUserMutationHookResult = ReturnType<
+  typeof useLoginUserMutation
 >;
-export type CreateUserMutationResult = Apollo.MutationResult<Types.CreateUserMutation>;
-export type CreateUserMutationOptions = Apollo.BaseMutationOptions<
-  Types.CreateUserMutation,
-  Types.CreateUserMutationVariables
+export type LoginUserMutationResult = Apollo.MutationResult<Types.LoginUserMutation>;
+export type LoginUserMutationOptions = Apollo.BaseMutationOptions<
+  Types.LoginUserMutation,
+  Types.LoginUserMutationVariables
 >;
 export const FindConversationByUserDocument = gql`
   query FindConversationByUser($id: ID!) {
