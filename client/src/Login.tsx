@@ -58,7 +58,7 @@ export default function Login({ handleUser }: LoginProps) {
           });
         }}
       >
-        <div tw="flex flex-col items-start space-y-2 text-gray-700">
+        <div tw="flex flex-col items-start space-y-2 text-sm text-gray-900">
           <Label>
             Display Name
             <Input

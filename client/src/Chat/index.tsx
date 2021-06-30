@@ -73,7 +73,7 @@ export default function Chat({
   });
 
   return (
-    <div tw="flex min-h-screen">
+    <div tw="flex h-screen">
       <Sidebar>
         <ConversationList
           currentUserId={currentUserId}
@@ -90,7 +90,7 @@ export default function Chat({
       </Sidebar>
       <div tw="flex flex-col flex-1">
         <Header>
-          <h1 tw="text-lg">
+          <h1>
             {conversation &&
               (conversation.name ||
                 conversation.users

@@ -26,14 +26,14 @@ export default function MessageInput({ conversationId }: MessageInputProps) {
       }}
     >
       <input
-        tw="flex-1 px-4 py-2 text-gray-700 placeholder-indigo-500 border border-indigo-100 rounded-xl"
+        tw="flex-1 px-4 py-2 text-sm text-gray-900 placeholder-indigo-600 border rounded-lg border-indigo-50"
         type="text"
         placeholder="Message"
         value={messageContent}
         onChange={(event) => setMessageContent(event.target.value)}
         required
       />
-      <button tw="px-4" type="submit">
+      <button tw="pl-4" type="submit">
         <PaperAirplaneIcon tw="w-5 h-5 text-indigo-600 transform rotate-90" />
       </button>
     </form>

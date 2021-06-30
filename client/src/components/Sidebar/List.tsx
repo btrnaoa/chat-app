@@ -7,9 +7,9 @@ type ListProps = {
 
 export default function List({ heading, children }: ListProps) {
   return (
-    <div tw="p-4">
+    <div tw="pt-4">
       <div tw="flex items-center">
-        <h2 tw="px-2 text-xs leading-tight tracking-wide text-indigo-400 uppercase">
+        <h2 tw="px-4 text-xs font-semibold leading-tight tracking-wide uppercase">
           {heading}
         </h2>
       </div>
