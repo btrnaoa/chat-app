@@ -10,23 +10,25 @@ import type { Context } from '../context';
 export default class ConversationResolver {
   constructor(@InjectManager() private readonly manager: EntityManager) {}
 
+  getConversationQuery(userId: Context['userId']) {
+    return this.manager
+      .createQueryBuilder(Conversation, 'conversation')
+      .leftJoinAndSelect('conversation.messages', 'message')
+      .leftJoinAndSelect('message.user', 'message_user')
+      .leftJoinAndSelect('conversation.users', 'user')
+      .innerJoin('conversation.users', 'u', 'u.id = :userId', { userId });
+  }
+
   @Query(() => Conversation, { nullable: true })
-  async conversation(@Arg('id', () => ID) id: string) {
-    return this.manager.findOne(Conversation, id, {
-      relations: ['users', 'messages', 'messages.user'],
-    });
+  async conversation(@Arg('id', () => ID) id: string, @Ctx() ctx: Context) {
+    return this.getConversationQuery(ctx.userId)
+      .where('conversation.id = :id', { id })
+      .getOne();
   }
 
   @Query(() => [Conversation])
   async conversations(@Ctx() ctx: Context) {
-    return this.manager
-      .createQueryBuilder(Conversation, 'conversation')
-      .leftJoinAndSelect('conversation.messages', 'message')
-      .leftJoinAndSelect('conversation.users', 'user')
-      .innerJoin('conversation.users', 'u', 'u.id = :id', {
-        id: ctx.userId,
-      })
-      .getMany();
+    return this.getConversationQuery(ctx.userId).getMany();
   }
 
   @Query(() => Conversation, { nullable: true })
