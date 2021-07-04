@@ -4,8 +4,8 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import {
   OnNewMessageDocument,
-  useFindConversationByUserLazyQuery,
   useGetConversationQuery,
+  useStartConversationMutation,
 } from '../graphql/hooks.generated';
 import ConversationList from './ConversationList';
 import MessageInput from './MessageInput';
@@ -27,16 +27,14 @@ export default function Chat({
   currentUserId,
   initialConversationId,
 }: ChatProps) {
-  const [conversationId, setConversationId] = useState<
-    Conversation['id'] | null
-  >(initialConversationId);
+  const [conversationId, setConversationId] = useState(initialConversationId);
 
   const {
     data: { conversation } = {},
     subscribeToMore,
   } = useGetConversationQuery({
-    variables: { id: conversationId! },
-    skip: !conversationId,
+    variables: { id: conversationId },
+    fetchPolicy: 'cache-and-network',
   });
 
   const subscribeToNewMessages = useCallback(
@@ -46,7 +44,7 @@ export default function Chat({
         OnNewMessageSubscriptionVariables
       >({
         document: OnNewMessageDocument,
-        variables: { conversationId: conversationId! },
+        variables: { conversationId },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data || !prev.conversation) {
             return prev;
@@ -66,10 +64,8 @@ export default function Chat({
     [conversationId, subscribeToMore],
   );
 
-  const [findConversationByUser] = useFindConversationByUserLazyQuery({
-    onCompleted: async ({ conversation: result }) => {
-      setConversationId(result ? result.id : null);
-    },
+  const [startConversation] = useStartConversationMutation({
+    onCompleted: (data) => setConversationId(data.conversationId),
   });
 
   return (
@@ -84,7 +80,7 @@ export default function Chat({
             if (id === currentUserId) {
               return;
             }
-            findConversationByUser({ variables: { id } });
+            startConversation({ variables: { userId: id } });
           }}
         />
       </Sidebar>

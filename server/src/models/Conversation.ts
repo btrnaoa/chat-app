@@ -4,6 +4,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -21,6 +22,14 @@ export default class Conversation {
   @Field({ nullable: true })
   @Column('varchar', { length: 21, nullable: true, unique: true })
   name?: string;
+
+  @Field()
+  @Column('bool', { default: false })
+  isPrivate: boolean;
+
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true })
+  createdBy?: User;
 
   @Field(() => [Message])
   @OneToMany(() => Message, (message) => message.conversation)

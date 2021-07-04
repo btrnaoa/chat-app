@@ -15,3 +15,7 @@ mutation LoginUser($conversationName: String, $username: String!) {
     }
   }
 }
+
+mutation StartConversation($userId: String!) {
+  conversationId: startConversation(userId: $userId)
+}

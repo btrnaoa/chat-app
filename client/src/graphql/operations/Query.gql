@@ -1,9 +1,3 @@
-query FindConversationByUser($id: ID!) {
-  conversation: findConversationByUser(id: $id) {
-    id
-  }
-}
-
 query GetConversation($id: ID!) {
   conversation(id: $id) {
     id
