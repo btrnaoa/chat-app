@@ -1,4 +1,4 @@
-schema: 'server/src/schema.gql'
+schema: 'server/src/graphql/schema.gql'
 documents: 'client/src/graphql/operations/*.gql'
 generates:
   client/src/graphql/types.generated.ts:

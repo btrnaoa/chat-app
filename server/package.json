@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node --transpile-only src/index.ts",
     "build": "tsc -p .",
+    "build:schema": "ts-node --transpile-only src/graphql/buildSchema.ts",
     "dev": "ts-node-dev --transpile-only src/index.ts --watch src",
     "test": "jest"
   },

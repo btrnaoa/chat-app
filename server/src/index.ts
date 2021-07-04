@@ -1,8 +1,7 @@
 import { ApolloServer } from 'apollo-server-express';
 import express, { Request, Response } from 'express';
-import { createServer } from 'http';
-import { resolve } from 'path';
-import { buildSchema } from 'type-graphql';
+import http from 'http';
+import path from 'path';
 import Container from 'typedi';
 import {
   createConnection,
@@ -11,9 +10,7 @@ import {
   useContainer,
 } from 'typeorm';
 import config from './config';
-import ConversationResolver from './graphql/resolvers/ConversationResolver';
-import MessageResolver from './graphql/resolvers/MessageResolver';
-import UserResolver from './graphql/resolvers/UserResolver';
+import buildSchema from './graphql/buildSchema';
 import User from './models/User';
 
 const subscriptions = {
@@ -50,12 +47,7 @@ getConnectionOptions()
   .then((options) =>
     createConnection(options)
       .then(async () => {
-        const app = express();
-        const schema = await buildSchema({
-          resolvers: [ConversationResolver, MessageResolver, UserResolver],
-          container: Container,
-          emitSchemaFile: resolve(__dirname, 'schema.gql'),
-        });
+        const schema = await buildSchema();
         const server = new ApolloServer({
           schema,
           subscriptions,
@@ -65,17 +57,18 @@ getConnectionOptions()
             return { userId };
           },
         });
+        const app = express();
 
         if (process.env.NODE_ENV === 'production') {
-          app.use(express.static(resolve('../client/build')));
+          app.use(express.static(path.resolve('../client/build')));
           app.get('*', (_req: Request, res: Response) => {
-            res.sendFile(resolve('../client/build', 'index.html'));
+            res.sendFile(path.resolve('../client/build', 'index.html'));
           });
         }
 
         server.applyMiddleware({ app });
 
-        const httpServer = createServer(app);
+        const httpServer = http.createServer(app);
         server.installSubscriptionHandlers(httpServer);
 
         httpServer.listen(config.port, () =>

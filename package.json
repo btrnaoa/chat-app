@@ -11,9 +11,10 @@
   "scripts": {
     "start": "yarn workspace server start",
     "dev": "concurrently \"yarn workspace server dev\" \"yarn generate --watch\" \"yarn workspace client start\"",
+    "predev": "yarn build:schema",
+    "build:schema": "yarn workspace server build:schema",
     "generate": "graphql-codegen",
-    "poststart": "yarn generate",
-    "heroku-postbuild": "yarn workspace client build"
+    "heroku-postbuild": "yarn build:schema && yarn generate && yarn workspace client build"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.21.5",
