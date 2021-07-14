@@ -13,6 +13,8 @@ import Chat from './Chat';
 import Login from './Login';
 import type { Conversation, User } from './graphql/types.generated';
 
+const serverUrl = process.env.REACT_APP_SERVER_URL;
+
 const cache = new InMemoryCache({
   typePolicies: {
     Query: {
@@ -36,14 +38,12 @@ export default function App() {
   };
 
   const httpLink = new HttpLink({
-    uri: `${window.location.origin}/graphql`,
+    uri: `${serverUrl}/graphql`,
     headers: context,
   });
 
   const wsLink = new WebSocketLink({
-    uri: `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
-      window.location.host
-    }/subscriptions`,
+    uri: `${serverUrl?.replace(/^http/i, 'ws')}/subscriptions`,
     options: {
       reconnect: true,
       connectionParams: context,

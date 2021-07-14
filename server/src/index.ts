@@ -1,7 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import http from 'http';
-import path from 'path';
 import Container from 'typedi';
 import {
   createConnection,
@@ -58,14 +57,6 @@ getConnectionOptions()
           },
         });
         const app = express();
-
-        if (process.env.NODE_ENV === 'production') {
-          app.use(express.static(path.resolve('../client/build')));
-          app.get('*', (_req: Request, res: Response) => {
-            res.sendFile(path.resolve('../client/build', 'index.html'));
-          });
-        }
-
         server.applyMiddleware({ app });
 
         const httpServer = http.createServer(app);
