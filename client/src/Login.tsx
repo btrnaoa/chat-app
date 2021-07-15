@@ -36,13 +36,21 @@ export default function Login({ handleUser }: LoginProps) {
     }));
   };
 
-  const [loginUser] = useLoginUserMutation({
+  const [loginUser, { loading }] = useLoginUserMutation({
     onCompleted: ({ userConversation }) => {
       if (userConversation) {
         handleUser(userConversation.user.id, userConversation.conversation.id);
       }
     },
   });
+
+  if (loading) {
+    return (
+      <Container>
+        <p tw="text-sm font-bold">Loading chat...</p>
+      </Container>
+    );
+  }
 
   return (
     <Container>
